@@ -46,8 +46,8 @@ if st.button("Find Meaning and Synonyms"):
 
             df = pd.DataFrame({
                 "Word": [word],
-                "Meaning": ["Parsed meaning from response"],
-                "Synonyms": ["synonym1, synonym2, synonym3"]  
+                "Meaning": [meaning],
+                "Synonyms": [synonyms]  
             })
 
             st.dataframe(df)
