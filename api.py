@@ -26,7 +26,7 @@ def get_word_details(word):
                 {"role": "user", "content": f"What is the meaning of '{word}'? Provide synonyms too."},
             ],
         )
-        return response["choices"][0]["message"]["content"]
+        return response["choices"][0].message["content"]
     except Exception as e:
         st.error(f"Error: {e}")
         return None
