@@ -32,30 +32,25 @@ def get_word_details(word):
         content = response.choices[0].message.content
 
         if content:
-            meaning_start = content.find("means:")
-            synonyms_start = content.find("Synonyms:")
+            lines = content.split('\n')
 
-            if meaning_start != -1:
-                meaning = content[meaning_start + len("means:"):synonyms_start].strip() if synonyms_start != -1 else content[meaning_start + len("means:"):].strip()
-            else:
-                meaning = "Meaning not found."
+            meaning = lines[0].strip() if lines else "Meaning not found."
 
-            if synonyms_start != -1:
-                synonyms = content[synonyms_start + len("Synonyms:"):].strip()
-                synonyms = synonyms.replace("\n", ", ").replace("  ", " ") 
-            else:
-                synonyms = "No synonyms found."
 
-            
+            synonyms = lines[1].strip() if len(lines) > 1 else "No synonyms found."
+
+            if "Synonyms:" in synonyms:
+                synonyms = synonyms.replace("Synonyms:", "").strip()
+
             df = pd.DataFrame({
-                "Word": [word], 
+                "Word": [word],
                 "Meaning": [meaning],
                 "Synonyms": [synonyms]
             })
 
-            return df  
+            return df
 
-        return None 
+        return None
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
@@ -66,6 +61,6 @@ if st.button("Find Meaning and Synonyms"):
         result_df = get_word_details(word)
         if result_df is not None:
             st.markdown(f"### Details for *{word}*:")
-            st.dataframe(result_df) 
+            st.dataframe(result_df)
     else:
         st.warning("Please enter a word!")
