@@ -1,7 +1,7 @@
 import openai
 import streamlit as st
 import pandas as pd
-import json
+
 st.title("Word Meaning and Synonyms Finder")
 
 api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
@@ -21,34 +21,39 @@ def get_word_details(word):
     try:
         st.write(f"Searching for meaning of: {word}")
 
-        response = openai.chat.completions.create(
-            model="gpt-4",
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # or "gpt-3.5-turbo"
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms in a JSON format like this: "
-                                           f"{{'meanings': [{'meaning': 'meaning1', 'synonyms': ['synonym1', 'synonym2']}, "
-                                           f"{{'meaning': 'meaning2', 'synonyms': ['synonym3', 'synonym4']}]}}"},
+                {"role": "user", "content": f"What is the meaning of '{word}'? Provide synonyms in a comma-separated list after the meaning."},
             ],
         )
 
-        content = response.choices[0].message.content
+        content = response.choices[0].message["content"]
 
-     
-        try:
-            data = json.loads(content)
-            meanings = data.get("meanings", [])
+        if content:
+            # Split the content into lines
+            lines = content.split('\n')
 
-            rows = []
-            for meaning_data in meanings:
-                meaning = meaning_data.get("meaning", "")
-                synonyms = meaning_data.get("synonyms", [])
-                rows.append({"Word": word, "Meaning": meaning, "Synonyms": ", ".join(synonyms)})
+            # Assume the first line is the meaning
+            meaning = lines[0].strip() if lines else "Meaning not found."
 
-            df = pd.DataFrame(rows)
+            # Assume the second line (if present) contains synonyms
+            synonyms = lines[1].strip() if len(lines) > 1 else "No synonyms found."
+            # If "Synonyms:" is in the line, remove it
+            if "Synonyms:" in synonyms:
+                synonyms = synonyms.replace("Synonyms:", "").strip()
+
+            # Create a Pandas DataFrame
+            df = pd.DataFrame({
+                "Word": [word],
+                "Meaning": [meaning],
+                "Synonyms": [synonyms]
+            })
+
             return df
-        except json.JSONDecodeError as e:
-            st.error(f"Error decoding JSON response: {e}")
-            return None
+
+        return None
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
