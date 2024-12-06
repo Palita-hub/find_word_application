@@ -1,7 +1,7 @@
 import openai
 import streamlit as st
 import pandas as pd
-
+import json
 st.title("Word Meaning and Synonyms Finder")
 
 api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
@@ -33,7 +33,7 @@ def get_word_details(word):
 
         content = response.choices[0].message.content
 
-        import json
+     
         try:
             data = json.loads(content)
             meanings = data.get("meanings", [])
