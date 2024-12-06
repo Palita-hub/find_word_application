@@ -19,7 +19,7 @@ def get_word_details(word):
         return None
 
     try:
-        response = openai.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4o-mini", 
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -27,10 +27,10 @@ def get_word_details(word):
             ],
         )
         return response["choices"][0].message["content"]
-    except Exception as e:
-        st.error(f"Error: {e}")
+    except openai.error.OpenAIError as e:
+        st.error(f"Error from OpenAI API: {e}")
         return None
-
+        
 if st.button("Find Meaning and Synonyms"):
     if word:
         result = get_word_details(word)
