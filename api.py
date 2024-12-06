@@ -1,8 +1,6 @@
 import openai
 import streamlit as st
 import pandas as pd
-import requests
-import json
 
 st.title("Word Meaning and Synonyms Finder")
 
@@ -32,63 +30,25 @@ def get_word_details(word):
         )
 
         st.write("API response:", response)
+        content = response.choices[0].message["content"]
 
-        content = response.choices[0].message.content
-
-        meaning_start = content.find("means:")
-        synonyms_start = content.find("Synonyms:")
-
-        if meaning_start != -1:
-            meaning = content[meaning_start + len("means:"):synonyms_start].strip() if synonyms_start != -1 else content[meaning_start + len("means:"):].strip()
-        else:
-            meaning = "Meaning not found."
-
-        if synonyms_start != -1:
-            synonyms = content[synonyms_start + len("Synonyms:"):].strip()
-            synonyms = synonyms.replace("\n", ", ").replace("  ", " ")
-        else:
-            synonyms = "No synonyms found."
-
-        return meaning, synonyms
+        return content
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
         raise
 
-def get_synonyms_from_api(word):
-    url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
-    try:
-        response = requests.get(url)
-        data = response.json()
-
-        if response.status_code == 200:
-            synonyms = []
-            for meaning in data[0]["meanings"]:
-                for definition in meaning["definitions"]:
-                    if "synonyms" in definition:
-                        synonyms.extend(definition["synonyms"])
-            return ", ".join(synonyms) if synonyms else "No synonyms found."
-        else:
-            return "Error fetching synonyms from external API."
-    except Exception as e:
-        return f"Error: {e}"
-
 if st.button("Find Meaning and Synonyms"):
     if word:
         result = get_word_details(word)
         if result:
-            meaning, synonyms = result
             st.markdown(f"### Details for *{word}*:")
-            st.write(f"**Meaning:** {meaning}")
-            st.write(f"**Synonyms:** {synonyms}")
-
-            external_synonyms = get_synonyms_from_api(word)
-            st.write(f"**External Synonyms (API):** {external_synonyms}")
+            st.write(result)
 
             df = pd.DataFrame({
                 "Word": [word],
-                "Meaning": [meaning],
-                "Synonyms": [synonyms]
+                "Meaning": ["Parsed meaning from response"],
+                "Synonyms": ["synonym1, synonym2, synonym3"]
             })
 
             st.dataframe(df)
