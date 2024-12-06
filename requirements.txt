@@ -2,5 +2,5 @@ openai
 requests
 streamlit
 pandas
-re
+json
 
