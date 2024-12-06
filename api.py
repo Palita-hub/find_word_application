@@ -1,7 +1,7 @@
 import openai
 import streamlit as st
 import pandas as pd
-import re
+import json
 
 st.title("Word Meaning and Synonyms Finder")
 
