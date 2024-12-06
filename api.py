@@ -33,7 +33,7 @@ def get_word_details(word):
 
         st.write("API response:", response)
 
-        content = response.choices[0].message["content"]
+        content = response.choices[0].message.content
 
         meaning_start = content.find("means:")
         synonyms_start = content.find("Synonyms:")
