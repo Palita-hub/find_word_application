@@ -29,7 +29,7 @@ def get_word_details(word):
             ]
         )
 
-        content = response.choices[0].message["content"]
+        content = response.choices[0].message.content
 
         if content:
             meaning_start = content.find("means:")
