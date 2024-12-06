@@ -34,25 +34,20 @@ def get_word_details(word):
 
         content = response.choices[0].message.content
 
-        # Check if the content is valid JSON before parsing
-        if content and content.strip():  # Check if content is not empty or whitespace
-            try:
-                data = json.loads(content)
-                meanings = data.get("meanings", [])
+        try:
+            data = json.loads(content)
+            meanings = data.get("meanings", [])
 
-                rows = []
-                for meaning_data in meanings:
-                    meaning = meaning_data.get("meaning", "")
-                    synonyms = meaning_data.get("synonyms", [])
-                    rows.append({"Word": word, "Meaning": meaning, "Synonyms": ", ".join(synonyms)})
+            rows = []
+            for meaning_data in meanings:
+                meaning = meaning_data.get("meaning", "")
+                synonyms = meaning_data.get("synonyms", [])
+                rows.append({"Word": word, "Meaning": meaning, "Synonyms": ", ".join(synonyms)})
 
-                df = pd.DataFrame(rows)
-                return df
-            except json.JSONDecodeError as e:
-                st.error(f"Error decoding JSON response: {e} Content: {content}") # Log the content for debugging
-                return None
-        else:
-            st.error("OpenAI response is empty or invalid JSON.")
+            df = pd.DataFrame(rows)
+            return df
+        except json.JSONDecodeError as e:
+            st.error(f"Error decoding JSON response: {e}")
             return None
 
     except Exception as e:
