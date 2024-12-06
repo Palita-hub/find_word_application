@@ -1,6 +1,7 @@
 import openai
 import streamlit as st
 import pandas as pd
+import json
 
 st.title("Word Meaning and Synonyms Finder")
 
@@ -31,26 +32,21 @@ def get_word_details(word):
 
         content = response.choices[0].message.content
 
-        if content:
-            lines = content.split('\n')
+        try:
+            data = json.loads(content)
+            meanings = data.get("meanings", [])
 
-            meaning = lines[0].strip() if lines else "Meaning not found."
+            rows = []
+            for meaning_data in meanings:
+                meaning = meaning_data.get("meaning", "")
+                synonyms = meaning_data.get("synonyms", [])
+                rows.append({"Word": word, "Meaning": meaning, "Synonyms": ", ".join(synonyms)})
 
-
-            synonyms = lines[1].strip() if len(lines) > 1 else "No synonyms found."
-
-            if "Synonyms:" in synonyms:
-                synonyms = synonyms.replace("Synonyms:", "").strip()
-
-            df = pd.DataFrame({
-                "Word": [word],
-                "Meaning": [meaning],
-                "Synonyms": [synonyms]
-            })
-
+            df = pd.DataFrame(rows)
             return df
-
-        return None
+        except json.JSONDecodeError as e:
+            st.error(f"Error decoding JSON response: {e}")
+            return None
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
