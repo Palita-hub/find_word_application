@@ -21,7 +21,7 @@ def get_word_details(word):
     try:
         st.write(f"Searching for meaning of: {word}")
 
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
