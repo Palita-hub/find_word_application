@@ -19,35 +19,39 @@ def get_word_details(word):
         return None
 
     try:
+        st.write(f"Searching for meaning of: {word}")
+
         response = openai.ChatCompletion.create(
-            model="gpt-4o-mini", 
+            model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": f"What is the meaning of '{word}'? Provide synonyms too."},
-            ],
+            ]
         )
-        return response["choices"][0].message["content"]
-    except openai.error.OpenAIError as e:
-        st.error(f"Error from OpenAI API: {e}")
-        return None
-        
+
+        st.write("API response:", response)
+
+        return response['choices'][0]['message']['content']
+
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
+        raise  
+
 if st.button("Find Meaning and Synonyms"):
     if word:
         result = get_word_details(word)
         if result:
             st.markdown(f"### Details for *{word}*:")
             st.write(result)
-            meaning = "A brief definition of the word."
-            synonyms = ["synonym1", "synonym2", "synonym3"]
+
 
             df = pd.DataFrame({
                 "Word": [word],
-                "Meaning": [meaning],
-                "Synonyms": [", ".join(synonyms)]
+                "Meaning": ["Parsed meaning from response"],
+                "Synonyms": ["synonym1, synonym2, synonym3"]  
             })
 
             st.dataframe(df)
-
             csv = df.to_csv(index=False)
             st.download_button(
                 label="Download Results as CSV",
