@@ -2,6 +2,7 @@ import openai
 import streamlit as st
 import pandas as pd
 
+
 st.title("Word Meaning and Synonyms Finder")
 
 api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
@@ -20,7 +21,6 @@ def get_word_details(word):
 
     try:
         st.write(f"Searching for meaning of: {word}")
-
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
@@ -29,30 +29,31 @@ def get_word_details(word):
             ]
         )
 
-        st.write("API response:", response)
+
         content = response.choices[0].message.content
 
         return content
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
-        raise
+        raise  
 
 if st.button("Find Meaning and Synonyms"):
     if word:
         result = get_word_details(word)
         if result:
             st.markdown(f"### Details for *{word}*:")
-            st.write(result)
+            st.write(result) 
 
             df = pd.DataFrame({
                 "Word": [word],
-                "Meaning": ["Parsed meaning from response"],
-                "Synonyms": ["synonym1, synonym2, synonym3"]
+                "Meaning": ["Parsed meaning from response"],  
+                "Synonyms": ["synonym1, synonym2, synonym3"]  
             })
 
-            st.dataframe(df)
+            st.dataframe(df)  
 
+            
             csv = df.to_csv(index=False)
             st.download_button(
                 label="Download Results as CSV",
