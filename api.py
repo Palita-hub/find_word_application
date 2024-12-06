@@ -30,7 +30,7 @@ def get_word_details(word):
         )
 
         st.write("API response:", response)
-        content = response.choices[0].message["content"]
+        content = response.choices[0].message.content
 
         return content
 
