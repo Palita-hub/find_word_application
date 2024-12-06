@@ -28,7 +28,7 @@ def get_word_details(word):
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms in a JSON format like this: "
                                            f"{{'meanings': [{'meaning': 'meaning1', 'synonyms': ['synonym1', 'synonym2']}, "
-                                           f"{{'meaning': 'meaning2', 'synonyms': ['synonym3', 'synonym4']}]}}"},
+                                           f"{{'meaning': 'meaning2', 'synonyms': ['synonym3', 'synonym4']}}",
             ],
         )
 
