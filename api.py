@@ -20,7 +20,7 @@ def get_word_details(word):
 
     try:
         response = openai.chat.completions.create(
-            model="gpt-4", 
+            model="gpt-4o-mini", 
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": f"What is the meaning of '{word}'? Provide synonyms too."},
