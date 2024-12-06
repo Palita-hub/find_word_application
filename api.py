@@ -40,9 +40,10 @@ if st.button("Find Meaning and Synonyms"):
     if word:
         result = get_word_details(word)
         if result:
+            meaning, synonyms = result
             st.markdown(f"### Details for *{word}*:")
-            st.write(result)
-
+            st.write(f"**Meaning:** {meaning}")
+            st.write(f"**Synonyms:** {synonyms}")
 
             df = pd.DataFrame({
                 "Word": [word],
