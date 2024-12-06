@@ -19,7 +19,7 @@ def get_word_details(word):
         return None
 
     try:
-        response = openai.chat.completion.create(
+        response = openai.chat.completions.create(
             model="gpt-4", 
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
