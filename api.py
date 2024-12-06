@@ -31,7 +31,7 @@ def get_word_details(word):
 
         st.write("API response:", response)
 
-        return response.choices[0].message['content']
+        return response.choices[0].message.content
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
