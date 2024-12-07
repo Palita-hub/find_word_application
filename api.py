@@ -22,42 +22,32 @@ def get_word_details(word):
         st.write(f"Searching for meaning of: {word}")
 
         response = openai.chat.completions.create(
-            model="gpt-4",  # or "gpt-3.5-turbo"
+            model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"What is the meaning of '{word}'? Provide synonyms in a comma-separated list after the meaning."},
+                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms. "
+                                           f"Separate meanings with 'Meaning:' and synonyms with 'Synonyms:'. "
+                                           f"If there are multiple meanings, number them (e.g., Meaning 1:, Meaning 2:)."},
             ],
         )
 
         content = response.choices[0].message.content
-        st.write(content)
+
         if content:
-            # Split the content into lines
-            lines = content.split('\n')
+            rows = []
+            meaning_blocks = content.split("Meaning")
 
-            # Assume the first line is the meaning
-            meaning = lines[1].strip() if lines else "Meaning not found."
-            parts = meaning.split('-')            
-            only_meaning = part[0]
-            only_synonyms = meaning.strip('-')
-            
-            # Assume the second line (if present) contains synonyms
-            synonyms = lines[1].strip() if len(lines) > 1 else "No synonyms found."
-            # If "Synonyms:" is in the line, remove it
-            if "Synonyms:" in synonyms:
-                synonyms = synonyms.replace("Synonyms:", "").strip() 
+            for i, block in enumerate(meaning_blocks[1:]):
+                meaning_index = block.find(":")
+                meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
+                synonyms = block[block.find("Synonyms:") + len("Synonyms:"):].strip()
+                rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms})
 
-            #synonyms_list = [syn.strip() for syn in synonyms.split(',')] if synonyms else []
-        
-            df = pd.DataFrame({
-                "Word": [word],
-                "Meaning": [only_meaning],
-                "Synonyms": [only_synonyms]
-            })
-
+            df = pd.DataFrame(rows)
             return df
-
-        return None
+        else:
+            st.error("OpenAI response is empty.")
+            return None
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
@@ -70,4 +60,4 @@ if st.button("Find Meaning and Synonyms"):
             st.markdown(f"### Details for *{word}*:")
             st.dataframe(result_df)
     else:
-        st.warning("Please enter a word!")
+        st.warning("Please enter a word!")          
