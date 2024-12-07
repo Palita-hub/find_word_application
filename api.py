@@ -57,10 +57,10 @@ def get_word_details(word):
                     meanings.append(part.split(":", 1)[1].strip())
                 elif "Synonyms" in part:
                     synonyms = part.split(":", 1)[1].strip()
-                    synonyms_list.append(synonyms if synonyms else "N/A")
+                    synonyms_list.append(synonyms if synonyms else "Synonyms not found.")
                 elif "Example" in part:
                     example = part.split(":", 1)[1].strip()
-                    examples.append(example if example else "N/A")
+                    examples.append(example if example else "Not found.")
 
             max_len = max(len(meanings), len(synonyms_list), len(examples))
             meanings.extend(["N/A"] * (max_len - len(meanings)))
