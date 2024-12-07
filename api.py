@@ -68,6 +68,7 @@ def get_word_details(word):
             examples.extend(["N/A"] * (max_len - len(examples)))
 
             df = pd.DataFrame({
+                "Word": [word] * max_len,
                 "Meaning": meanings,
                 "Synonyms": synonyms_list,
                 "Example": examples
