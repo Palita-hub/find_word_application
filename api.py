@@ -41,7 +41,7 @@ def get_word_details(word):
             for i, block in enumerate(meaning_blocks[1:]):
                 meaning_index = block.find(":")
                 meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
-                synonyms1 = block[block.find("Synonyms:") + len("Synonyms:"):].strip()
+                synonyms1 = block[block.find("Synonyms:") + len("Synonyms:"):'.'].strip()
                 synonyms2 = synonyms1.replace(',','\n')
                 synonyms =synonyms2.split('\n')
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms})
