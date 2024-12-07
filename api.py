@@ -45,7 +45,7 @@ def get_word_details(word):
                 meaning1 = block.split('.')
                 meaning2 = meaning1[1]
                 
-                synonyms1 = block[meaning2.find(':')+1:meaning2.find('.')].strip()
+                synonyms1 = block[meaning2.find(':')+1:meaning2.find('.')-1].strip()
                 synonyms2 = synonyms1.replace(',','\n')
                 synonyms3 = synonyms2.split('.')
                 synonyms4 = synonyms3[0]
