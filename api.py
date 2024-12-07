@@ -36,8 +36,9 @@ def get_word_details(word):
             lines = content.split('\n')
 
             # Assume the first line is the meaning
-            meaning = lines[0].strip() if lines else "Meaning not found."
+            meaning = lines[1].strip() if lines else "Meaning not found."
 
+            lines_syn = content.split('-')
             # Assume the second line (if present) contains synonyms
             synonyms = lines[1].strip() if len(lines) > 1 else "No synonyms found."
             # If "Synonyms:" is in the line, remove it
