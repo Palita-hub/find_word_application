@@ -37,7 +37,7 @@ def get_word_details(word):
 
             # Assume the first line is the meaning
             meaning = lines[1].strip() if lines else "Meaning not found."
-            parts = meaing.split('-')            
+            parts = meaning.split('-')            
             only_meaning = part[0]
             only_synonyms = meaning.strip('-')
             
