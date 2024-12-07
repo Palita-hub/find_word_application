@@ -26,38 +26,56 @@ def get_word_details(word):
                 messages=[
                     {"role": "system", "content": "You are an assistant specialized in language analysis."},
                     {"role": "user",
-                     "content": f"Provide the following information for the word '{word}' in this structured format:\n"
-                                "Meaning: [Concise explanation of the word's meaning]\n"
-                                "Synonyms: [Comma-separated list of synonyms]\n"
-                                "Example: [One sentence example using the word]"},
+                     "content": f"Provide detailed information about the word '{word}' in this structured format:\n"
+                                "1. Meaning: [First meaning]\n"
+                                "   Synonyms: [Comma-separated list of synonyms for this meaning]\n"
+                                "   Example: [Example sentence using the word with this meaning]\n"
+                                "2. Meaning: [Second meaning, if any]\n"
+                                "   Synonyms: [Comma-separated list of synonyms for this meaning]\n"
+                                "   Example: [Example sentence using the word with this meaning]"},
                 ],
-                max_tokens=300,
+                max_tokens=500,
                 temperature=0.7
             )
 
         content = response.choices[0].message.content.strip()
 
-        meaning = None
-        synonyms = []
-        example = None
+        meanings = []
+        synonyms_list = []
+        examples = []
+
+        current_meaning = None
+        current_synonyms = []
+        current_example = None
 
         for line in content.split("\n"):
+            line = line.strip()
             if line.lower().startswith("meaning:"):
-                meaning = line.split(":", 1)[1].strip()
+                if current_meaning:
+                    meanings.append(current_meaning)
+                    synonyms_list.append(", ".join(current_synonyms) if current_synonyms else "N/A")
+                    examples.append(current_example if current_example else "N/A")
+                current_meaning = line.split(":", 1)[1].strip()
+                current_synonyms = []
+                current_example = None
             elif line.lower().startswith("synonyms:"):
-                synonyms = [syn.strip() for syn in line.split(":", 1)[1].split(",") if syn]
+                current_synonyms = [syn.strip() for syn in line.split(":", 1)[1].split(",") if syn]
             elif line.lower().startswith("example:"):
-                example = line.split(":", 1)[1].strip()
+                current_example = line.split(":", 1)[1].strip()
 
-        if not meaning:
-            st.error("Couldn't retrieve the meaning of the word. Please try another word.")
+        if current_meaning:
+            meanings.append(current_meaning)
+            synonyms_list.append(", ".join(current_synonyms) if current_synonyms else "N/A")
+            examples.append(current_example if current_example else "N/A")
+
+        if not meanings:
+            st.error("Couldn't retrieve the details of the word. Please try another word.")
             return None
 
         df = pd.DataFrame({
-            "Word": [word],
-            "Meaning": [meaning],
-            "Synonyms": [", ".join(synonyms) if synonyms else "N/A"],
-            "Example": [example if example else "N/A"]
+            "Meaning": meanings,
+            "Synonyms": synonyms_list,
+            "Example": examples
         })
         return df
 
