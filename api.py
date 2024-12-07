@@ -30,9 +30,7 @@ def get_word_details(word):
         )
 
         content = response.choices[0].message.content
-
-        print(content)
-
+        st.write(content)
         if content:
             # Split the content into lines
             lines = content.split('\n')
