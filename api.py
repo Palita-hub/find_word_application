@@ -42,12 +42,12 @@ def get_word_details(word):
             if line.lower().startswith("meaning:"):
                 meaning = line.split(":", 1)[1].strip()
             elif line.lower().startswith("synonyms:"):
-                synonyms = [syn.strip() for syn in line.split(":", 1)[1].split(",")]
+                synonyms = [syn.strip() for syn in line.split(":", 1)[1].split(",") if syn]
             elif line.lower().startswith("example:"):
                 example = line.split(":", 1)[1].strip()
 
         if not meaning:
-            st.error("Could not retrieve the meaning of the word.")
+            st.error("Couldn't retrieve the meaning of the word. Please try another word.")
             return None
 
         df = pd.DataFrame({
