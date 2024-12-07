@@ -40,6 +40,9 @@ def get_word_details(word):
 
         content = response.choices[0].message.content.strip()
 
+        st.text("Raw Response from OpenAI:")
+        st.text(content)
+
         meanings = []
         synonyms_list = []
         examples = []
@@ -98,3 +101,4 @@ if st.button("Find Meaning and Synonyms"):
             st.dataframe(result_df)
     else:
         st.warning("Please enter a word!")
+
