@@ -46,12 +46,19 @@ def get_word_details(word):
                 example_index = block.find('Example:')
                 
                 meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
-                synonyms1 = block[block.find['.']:example_index].strip()
+                
+                synonyms1 = block[len(meaning)+1:example_index].strip()
+                
                 synonyms2 = synonyms1.split('.')
+                
                 synonyms3 = (synonyms2[0]).replace(',','\n')
+                
                 example = block[synonyms3.find['.']:].strip()                
+                
                 synonyms =synonyms3.split('\n')
-                example = block[example_index + 1:].strip()
+                
+                
+                
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
 
             df = pd.DataFrame(rows)
