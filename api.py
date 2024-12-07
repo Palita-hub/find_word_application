@@ -51,7 +51,7 @@ def get_word_details(word):
         
             df = pd.DataFrame({
                 "Word": [word],
-                "Meaning": [meaning],
+                "Meaning": [only_meaning],
                 "Synonyms": [only_synonyms]
             })
 
