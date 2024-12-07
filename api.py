@@ -42,15 +42,18 @@ def get_word_details(word):
                 meaning_index = block.find(":")
                 synonyms_index = block.find('.')
                 meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
-                synonyms1 = block[block.find("Synonyms:") + len("Synonyms:"):block.find('Example:')-1].strip()
+                meaning1 = block.split('.')
+                meaning2 = meaning1[1]
+                
+                synonyms1 = meaning2[meaning.find(':')+1:meaning2.find('.')].strip()
                 synonyms2 = synonyms1.replace(',','\n')
                 synonyms3 = synonyms2.split('.')
                 synonyms4 = synonyms3[0]
                 synonyms =synonyms4.split('\n')
-                #no_synonyms = block[block.find("Synonyms:") + len("Synonyms:")-1:block.find('Example:')-1].strip()
-                #if no_synonyms == ':':
-                    #synonyms = 'No synonyms found'
-                example = block[block.find('Example:')+len('Example:'):].strip()   
+                
+                example1 = meaning.split('.')
+                example2 = example1[1]
+                example = example2[block.find(':'):].strip()   
                 if example == '\n':
                     example.split('\n')
                 
