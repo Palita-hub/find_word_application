@@ -27,8 +27,7 @@ def get_word_details(word):
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms. "
                                            f"Separate meanings with 'Meaning:' and synonyms with 'Synonyms:'. "
-                                           f"If there are multiple meanings, number them (e.g., Meaning 1:, Meaning 2:). "
-                                           f"Separate multiple meanings or synonyms with a newline character ('\\n')."},
+                                           f"If there are multiple meanings, number them (e.g., Meaning 1:, Meaning 2:)."},
             ],
         )
 
@@ -41,12 +40,7 @@ def get_word_details(word):
             for i, block in enumerate(meaning_blocks[1:]):
                 meaning_index = block.find(":")
                 meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
-                meaning = meaning.replace("Meaning", "").replace(str(i + 1), "").strip()
                 synonyms = block[block.find("Synonyms:") + len("Synonyms:"):].strip()
-
-                # Replace newlines with commas for synonyms if needed
-                synonyms = synonyms.replace("\n", ", ")
-
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms})
 
             df = pd.DataFrame(rows)
