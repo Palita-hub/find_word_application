@@ -57,11 +57,6 @@ def get_word_details(word):
                 
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
 
-            
-            
-            
-            
-            
             df = pd.DataFrame(rows)
             return df
         else:
@@ -71,3 +66,12 @@ def get_word_details(word):
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
         return None
+
+if st.button("Find Meaning and Synonyms"):
+    if word:
+        result_df = get_word_details(word)
+        if result_df is not None:
+            st.markdown(f"### Details for *{word}*:")
+            st.dataframe(result_df)
+    else:
+        st.warning("Please enter a word!")   
