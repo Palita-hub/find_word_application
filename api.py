@@ -50,6 +50,8 @@ def get_word_details(word):
                 example = block[block.find('Example:')+len('Example:'):].strip()   
                 if example == '\n':
                     example.split('\n')
+                if synonyms == '':
+                    synonyms = 'No synonym found'
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
 
             df = pd.DataFrame(rows)
