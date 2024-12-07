@@ -5,8 +5,7 @@ import pandas as pd
 st.title("Word Meaning and Synonyms Finder")
 
 api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
-if api_key:
-    openai.api_key = api_key
+openai.api_key = api_key
 
 word = st.text_input("What word are you looking for?")
 
@@ -15,83 +14,63 @@ def get_word_details(word):
         st.error("Please enter your API key in the sidebar.")
         return None
 
-    if not word.strip().isalpha():
-        st.warning("Enter a valid word containing only alphabets.")
+    if not word:
+        st.warning("Enter a word to search for its meaning.")
         return None
 
     try:
-        with st.spinner("Fetching details... Please wait."):
-            response = openai.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "You are an assistant specialized in language analysis."},
-                    {"role": "user",
-                     "content": f"Provide detailed information about the word '{word}' in this structured format:\n"
-                                "1. Meaning: [First meaning]\n"
-                                "   Synonyms: [Comma-separated list of synonyms for this meaning]\n"
-                                "   Example: [Example sentence using the word with this meaning]\n"
-                                "2. Meaning: [Second meaning, if any]\n"
-                                "   Synonyms: [Comma-separated list of synonyms for this meaning]\n"
-                                "   Example: [Example sentence using the word with this meaning]"},
-                ],
-                max_tokens=500,
-                temperature=0.7
-            )
+        st.write(f"Searching for meaning of: {word}")
 
-        content = response.choices[0].message.content.strip()
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms. "
+                                           f"Separate meanings with 'Meaning:' and synonyms with 'Synonyms:'. "
+                                           f"If there are multiple meanings, number them (e.g., Meaning 1:, Meaning 2:)."
+                                           f"Show example sentence of every meaning of '{word}'."},
+            ],
+        )
 
-        st.text("Raw Response from OpenAI:")
-        st.text(content)
+        content = response.choices[0].message.content
 
-        meanings = []
-        synonyms_list = []
-        examples = []
+        if content:
+            rows = []
+            meaning_blocks = content.split("Meaning")
 
-        current_meaning = None
-        current_synonyms = []
-        current_example = None
+            for i, block in enumerate(meaning_blocks[1:]):
+                meaning_index = block.find(":")
+                synonyms_index = block.find('.')
+                meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
+                synonyms_with_ex = block.replace('meaning','')
+                synonyms_no_ex = synonyms_with_ex.split('.')
+                synonyms_with_colon = synonyms_no_ex[0]
+                synonyms_no_colon = synonyms_with_colon.split(':')
+                synonyms_non = synonyms_no_colon.replace(',','\n')
+                synonyms = synonyms_non.split('\n')
 
-        for line in content.split("\n"):
-            line = line.strip()
-            if line.lower().startswith("meaning:"):
-                if current_meaning:
-                    meanings.append(current_meaning)
-                    synonyms_list.append(", ".join(current_synonyms) if current_synonyms else "N/A")
-                    examples.append(current_example if current_example else "N/A")
-                current_meaning = line.split(":", 1)[1].strip()
-                current_synonyms = []
-                current_example = None
-            elif line.lower().startswith("synonyms:"):
-                current_synonyms = [syn.strip() for syn in line.split(":", 1)[1].split(",") if syn]
-            elif line.lower().startswith("example:"):
-                current_example = line.split(":", 1)[1].strip()
+                example_with_colon = synonyms_no_ex[1]
+                example = example_with_colon.split[1]                
+                
+                if example == '\n':
+                    example.split('\n')
+                
+                rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
 
-        if current_meaning:
-            meanings.append(current_meaning)
-            synonyms_list.append(", ".join(current_synonyms) if current_synonyms else "N/A")
-            examples.append(current_example if current_example else "N/A")
-
-        if not meanings:
-            st.error("Couldn't retrieve the details of the word. Please try another word.")
+            
+            
+            
+            
+            
+            df = pd.DataFrame(rows)
+            return df
+        else:
+            st.error("OpenAI response is empty.")
             return None
 
-        df = pd.DataFrame({
-            "Meaning": meanings,
-            "Synonyms": synonyms_list,
-            "Example": examples
-        })
-        return df
-
-    except openai.error.AuthenticationError:
-        st.error("Authentication error: Please check your API key.")
-    except openai.error.RateLimitError:
-        st.error("Rate limit exceeded: Too many requests. Try again later.")
-    except openai.error.OpenAIError as e:
-        st.error(f"OpenAI error: {e}")
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
-
-    return None
+        return None
 
 if st.button("Find Meaning and Synonyms"):
     if word:
@@ -100,5 +79,4 @@ if st.button("Find Meaning and Synonyms"):
             st.markdown(f"### Details for *{word}*:")
             st.dataframe(result_df)
     else:
-        st.warning("Please enter a word!")
-
+        st.warning("Please enter a word!")   
