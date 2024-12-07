@@ -34,39 +34,40 @@ def get_word_details(word):
 
         content = response.choices[0].message.content
 
-        if content:
-            rows = []
-            meaning_blocks = content.split("Meaning")
+        meaning = None
+        synonyms = []
+        example = None
 
-            for i, block in enumerate(meaning_blocks[1:]):
-                meaning_index = block.find(":")
-                synonyms_index = block.find('.')
-                meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
-                meaning1 = block.split('.')
-                meaning2 = meaning1[1]
-                
-                synonyms1 = block[meaning2.find(':')+1:meaning2.find('.')-1].strip()
-                synonyms2 = synonyms1.replace(',','\n')
-                synonyms3 = synonyms2.split('.')
-                synonyms4 = synonyms3[0]
-                synonyms =synonyms4.split('\n')
-                
-                example1 = synonyms3[1]
-                example = block[example1.find(':')+1:].strip()   
-                if example == '\n':
-                    example.split('\n')
-                
-                rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
+        for line in content.split("\n"):
+            if line.lower().startswith("meaning:"):
+                meaning = line.split(":", 1)[1].strip()
+            elif line.lower().startswith("synonyms:"):
+                synonyms = [syn.strip() for syn in line.split(":", 1)[1].split(",")]
+            elif line.lower().startswith("example:"):
+                example = line.split(":", 1)[1].strip()
 
-            df = pd.DataFrame(rows)
-            return df
-        else:
-            st.error("OpenAI response is empty.")
+        if not meaning:
+            st.error("Could not retrieve the meaning of the word.")
             return None
 
+        df = pd.DataFrame({
+            "Word": [word],
+            "Meaning": [meaning],
+            "Synonyms": [", ".join(synonyms) if synonyms else "N/A"],
+            "Example": [example if example else "N/A"]
+        })
+        return df
+
+    except openai.error.AuthenticationError:
+        st.error("Authentication error: Please check your API key.")
+    except openai.error.RateLimitError:
+        st.error("Rate limit exceeded: Too many requests. Try again later.")
+    except openai.error.OpenAIError as e:
+        st.error(f"OpenAI error: {e}")
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
-        return None
+
+    return None
 
 if st.button("Find Meaning and Synonyms"):
     if word:
@@ -75,4 +76,4 @@ if st.button("Find Meaning and Synonyms"):
             st.markdown(f"### Details for *{word}*:")
             st.dataframe(result_df)
     else:
-        st.warning("Please enter a word!")    
+        st.warning("Please enter a word!")
