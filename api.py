@@ -5,8 +5,7 @@ import pandas as pd
 st.title("Word Meaning and Synonyms Finder")
 
 api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
-if api_key:
-    openai.api_key = api_key
+openai.api_key = api_key
 
 word = st.text_input("What word are you looking for?")
 
@@ -15,85 +14,60 @@ def get_word_details(word):
         st.error("Please enter your API key in the sidebar.")
         return None
 
-    if not word.strip().isalpha():
-        st.warning("Enter a valid word containing only alphabets.")
+    if not word:
+        st.warning("Enter a word to search for its meaning.")
         return None
 
     try:
-        with st.spinner("Fetching details... Please wait."):
-            response = openai.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "You are an assistant specialized in language analysis."},
-                    {"role": "user",
-                     "content": f"Provide detailed information about the word '{word}' in this exact structured format:\n"
-                                "### Meaning 1:\n"
-                                "[Meaning]\n"
-                                "### Synonyms 1:\n"
-                                "[Comma-separated list of synonyms]\n"
-                                "### Example 1:\n"
-                                "[Example sentence]\n"
-                                "### Meaning 2 (if any):\n"
-                                "[Meaning]\n"
-                                "### Synonyms 2:\n"
-                                "[Comma-separated list of synonyms]\n"
-                                "### Example 2:\n"
-                                "[Example sentence]"},
-                ],
-                max_tokens=500,
-                temperature=0.7
-            )
+        st.write(f"Searching for meaning of: {word}")
 
-        content = response.choices[0].message.content.strip()
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms. "
+                                           f"Separate meanings with 'Meaning:' and synonyms with 'Synonyms:'. "
+                                           f"If there are multiple meanings, number them (e.g., Meaning 1:, Meaning 2:)."
+                                           f"Show example sentence of every meaning of '{word}'."},
+            ],
+        )
 
-        st.text("Raw Response from OpenAI:")
-        st.text(content)
+        content = response.choices[0].message.content
 
-        meanings = []
-        synonyms_list = []
-        examples = []
+        if content:
+            rows = []
+            meaning_blocks = content.split("Meaning")
 
-        parts = content.split("###")
-        for part in parts:
-            if part.lower().startswith("meaning"):
-                meanings.append(part.split(":", 1)[1].strip())
-            elif part.lower().startswith("synonyms"):
-                synonyms = part.split(":", 1)[1].strip()
-                synonyms_list.append(synonyms if synonyms else "N/A")
-            elif part.lower().startswith("example"):
-                examples.append(part.split(":", 1)[1].strip())
+            for i, block in enumerate(meaning_blocks[1:]):
+                meaning_index = block.find(":")
+                synonyms_index = block.find('.')
+                meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
+                synonyms_with_ex = block.replace('meaning'.'')
+                synonyms_no_ex = synonyms_with_ex.split('.')
+                synonyms_with_colon = synonyms_no_ex[0]
+                synonyms_no_colon = synonyms_with_colon.split(':')
+                synonyms_non = synonyms_no_colon.replace(',','\n')
+                synonyms = synonyms_non.split('\n')
 
-        if not meanings:
-            st.error("Couldn't retrieve the details of the word. Please try another word.")
+                example_with_colon = synonyms_no_ex[1]
+                example = example_with_colon.split[1]                
+                
+                if example == '\n':
+                    example.split('\n')
+                
+                rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
+
+            
+            
+            
+            
+            
+            df = pd.DataFrame(rows)
+            return df
+        else:
+            st.error("OpenAI response is empty.")
             return None
 
-        max_len = max(len(meanings), len(synonyms_list), len(examples))
-        synonyms_list.extend(["N/A"] * (max_len - len(synonyms_list)))
-        examples.extend(["N/A"] * (max_len - len(examples)))
-
-        df = pd.DataFrame({
-            "Meaning": meanings,
-            "Synonyms": synonyms_list,
-            "Example": examples
-        })
-        return df
-
-    except openai.error.AuthenticationError:
-        st.error("Authentication error: Please check your API key.")
-    except openai.error.RateLimitError:
-        st.error("Rate limit exceeded: Too many requests. Try again later.")
-    except openai.error.OpenAIError as e:
-        st.error(f"OpenAI error: {e}")
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
-
-    return None
-
-if st.button("Find Meaning and Synonyms"):
-    if word:
-        result_df = get_word_details(word)
-        if result_df is not None:
-            st.markdown(f"### Details for *{word}*:")
-            st.dataframe(result_df)
-    else:
-        st.warning("Please enter a word!")
+        return None
