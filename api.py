@@ -21,7 +21,7 @@ def get_word_details(word):
     try:
         st.write(f"Searching for meaning of: {word}")
 
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="gpt-4",  # or "gpt-3.5-turbo"
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -29,7 +29,7 @@ def get_word_details(word):
             ],
         )
 
-        content = response.choices[0].message["content"]
+        content = response.choices[0].message.content
 
         if content:
             # Split the content into lines
