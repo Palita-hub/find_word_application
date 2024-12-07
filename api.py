@@ -47,12 +47,12 @@ def get_word_details(word):
             if "Synonyms:" in synonyms:
                 synonyms = synonyms.replace("Synonyms:", "").strip() 
 
-            synonyms_list = [syn.strip() for syn in synonyms.split(',')] if synonyms else []
+            #synonyms_list = [syn.strip() for syn in synonyms.split(',')] if synonyms else []
         
             df = pd.DataFrame({
                 "Word": [word],
                 "Meaning": [meaning],
-                "Synonyms": [', '.join(synonyms_list) if synonyms_list else "No synonyms found."]
+                "Synonyms": [only_synonyms]
             })
 
             return df
