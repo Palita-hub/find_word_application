@@ -40,24 +40,18 @@ def get_word_details(word):
 
             for i, block in enumerate(meaning_blocks[1:]):
                 meaning_index = block.find(":")
-                
-                example_index = block.find('Example:')
-                
-                meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
 
-                synonyms_index = meaning.find('.')
+                meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
                 
-                synonyms1 = block[synonyms_index+1:example_index].strip()
+                where_synonyms = (meaning.split('.'))[1]
                 
-                synonyms2 = synonyms1.split('.')
+                synonyms1 = where_synonyms.split('.')
                 
-                synonyms3 = (synonyms2[0]).replace(',','\n')
+                synonyms2 = (synonyms1[0]).replace(',','\n')               
                 
-                example = block[(synonyms1.find('.'))+1:].strip()                
-                
-                synonyms =synonyms3.split('\n')
-                
-                
+                synonyms =synonyms2.split('\n')
+
+                example = synonyms[1]
                 
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
 
