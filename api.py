@@ -48,8 +48,8 @@ def get_word_details(word):
                 synonyms3 = (synonyms2[0]).replace(',','\n')               
                 synonyms =synonyms3.split('\n')
 
-                example = (synonyms2)[1]
-
+                example_index = (synonyms2[1]).find(':')
+                example = block[example_index+1:].strip()
                 
                 
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
