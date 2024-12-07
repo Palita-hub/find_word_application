@@ -51,7 +51,7 @@ def get_word_details(word):
                 
                 synonyms =synonyms2.split('\n')
 
-                example = synonyms1[1]
+                
                 
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
 
