@@ -31,6 +31,8 @@ def get_word_details(word):
 
         content = response.choices[0].message.content
 
+        print(content)
+
         if content:
             # Split the content into lines
             lines = content.split('\n')
