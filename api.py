@@ -22,7 +22,7 @@ def get_word_details(word):
         st.write(f"Searching for meaning of: {word}")
 
         response = openai.chat.completions.create(
-            model="gpt-4",  # or "gpt-3.5-turbo"
+            model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": f"What is the meaning of '{word}'? Provide synonyms in a comma-separated list after the meaning."},
@@ -32,15 +32,10 @@ def get_word_details(word):
         content = response.choices[0].message.content
 
         if content:
-            # Split the content into lines
             lines = content.split('\n')
 
-            # Assume the first line is the meaning
             meaning = lines[0].strip() if lines else "Meaning not found."
-
-            # Assume the second line (if present) contains synonyms
             synonyms = lines[1].strip() if len(lines) > 1 else "No synonyms found."
-            # If "Synonyms:" is in the line, remove it
             if "Synonyms:" in synonyms:
                 synonyms = synonyms.replace("Synonyms:", "").strip()
 
