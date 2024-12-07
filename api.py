@@ -40,7 +40,9 @@ def get_word_details(word):
             for i, block in enumerate(meaning_blocks[1:]):
                 meaning_index = block.find(":")
                 meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
+                only_meaning = (meaning.split('.'))[0]
                 synonyms = block[block.find("Synonyms:") + len("Synonyms:"):].strip()
+                only_synonyms = (synonyms.split(':'))[1]
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms})
 
             df = pd.DataFrame(rows)
