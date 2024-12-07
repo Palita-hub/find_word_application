@@ -47,8 +47,8 @@ def get_word_details(word):
                 synonyms3 = synonyms2.split('.')
                 synonyms4 = synonyms3[0]
                 synonyms =synonyms4.split('\n')
-                if not synonyms or synonyms == [''] or synonyms[0].lower() in ["no synonyms", "no synonyms found", "none", "n/a"]:
-                    synonyms = ["No synonyms found"]                
+                if block[block.find("Synonyms:") + len("Synonyms:")-1:block.find('Example:')].strip() = ':':
+                    synonyms = 'No synonyms found'
                 example = block[block.find('Example:')+len('Example:'):].strip()   
                 if example == '\n':
                     example.split('\n')
