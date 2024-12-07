@@ -44,7 +44,7 @@ def get_word_details(word):
             df = pd.DataFrame({
                 "Word": [word],
                 "Meaning": [meaning],
-                "Synonyms": [', '.join(synonyms_list)]
+                "Synonyms": [', '.join(synonyms_list)if synonyms_list else "No synonyms found."]
             })
 
             return df
