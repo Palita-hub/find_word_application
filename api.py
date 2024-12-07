@@ -46,7 +46,7 @@ def get_word_details(word):
                 synonyms_no_ex = synonyms_with_ex.split('.')
                 synonyms_with_colon = synonyms_no_ex[0]
                 synonyms_no_colon = synonyms_with_colon.split(':')
-                synonyms_non = synonyms_no_colon.replace(',','\n')
+                synonyms_non = (synonyms_no_colon[1]).replace(',','\n')
                 synonyms = synonyms_non.split('\n')
 
                 example_with_colon = synonyms_no_ex[1]
