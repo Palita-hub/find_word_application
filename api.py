@@ -45,7 +45,7 @@ def get_word_details(word):
                 
                 meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
 
-                synonyms_index = block.find('.')
+                synonyms_index = meaning.find(':')
                 
                 synonyms1 = block[synonyms_index+1:example_index].strip()
                 
@@ -53,7 +53,7 @@ def get_word_details(word):
                 
                 synonyms3 = (synonyms2[0]).replace(',','\n')
                 
-                example = block[synonyms1.find(':'):].strip()                
+                example = block[(synonyms1.find(':'))-1:].strip()                
                 
                 synonyms =synonyms3.split('\n')
                 
