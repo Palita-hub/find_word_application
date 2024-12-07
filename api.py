@@ -5,7 +5,8 @@ import pandas as pd
 st.title("Word Meaning and Synonyms Finder")
 
 api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
-openai.api_key = api_key
+if api_key:
+    openai.api_key = api_key
 
 word = st.text_input("What word are you looking for?")
 
@@ -14,25 +15,27 @@ def get_word_details(word):
         st.error("Please enter your API key in the sidebar.")
         return None
 
-    if not word:
-        st.warning("Enter a word to search for its meaning.")
+    if not word.strip().isalpha():
+        st.warning("Enter a valid word containing only alphabets.")
         return None
 
     try:
-        st.write(f"Searching for meaning of: {word}")
+        with st.spinner("Fetching details... Please wait."):
+            response = openai.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": "You are an assistant specialized in language analysis."},
+                    {"role": "user",
+                     "content": f"Provide the following information for the word '{word}' in this structured format:\n"
+                                "Meaning: [Concise explanation of the word's meaning]\n"
+                                "Synonyms: [Comma-separated list of synonyms]\n"
+                                "Example: [One sentence example using the word]"},
+                ],
+                max_tokens=300,
+                temperature=0.7
+            )
 
-        response = openai.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms. "
-                                           f"Separate meanings with 'Meaning:' and synonyms with 'Synonyms:'. "
-                                           f"If there are multiple meanings, number them (e.g., Meaning 1:, Meaning 2:)."
-                                           f"Show example sentence of every meaning of '{word}'."},
-            ],
-        )
-
-        content = response.choices[0].message.content
+        content = response.choices[0].message.content.strip()
 
         meaning = None
         synonyms = []
