@@ -1,7 +1,6 @@
 import openai
 import streamlit as st
 import pandas as pd
-import random
 
 st.title("Word Meaning and Synonyms Finder")
 
@@ -100,21 +99,26 @@ def get_word_details(word):
 
     return None, None, None, None
 
+def shuffle_list(data_list):
+    if 'shuffle_idx' not in st.session_state:
+        st.session_state.shuffle_idx = list(range(len(data_list)))
+    else:
+        st.session_state.shuffle_idx = st.session_state.shuffle_idx[::-1]
+
+    return [data_list[i] for i in st.session_state.shuffle_idx]
+
 def generate_quiz(meanings, synonyms, examples):
-    questions = []
-    explanations = []
+    questions = [
+        ("What is the correct meaning of the word based on its definition?", meanings),
+        ("Which of the following are synonyms for the word?", synonyms),
+        ("Which of these sentences uses the word correctly?", examples),
+    ]
 
-    for i in range(10):
-        correct_answer_idx = random.choice([0, 1, 2])
-        options = random.sample(meanings + synonyms + examples, 3)
-        question = f"What is the correct meaning of the word based on its definition?"
+    shuffled_questions = []
+    for question, options in questions:
+        shuffled_questions.append((question, shuffle_list(options)))
 
-        correct_answer = options[correct_answer_idx]
-        explanation = f"The correct answer is: {correct_answer}. This corresponds to the meaning or usage provided earlier."
-
-        questions.append((question, options, correct_answer, explanation))
-
-    return questions
+    return shuffled_questions
 
 if st.button("Find Meaning and Synonyms"):
     if word:
@@ -124,13 +128,14 @@ if st.button("Find Meaning and Synonyms"):
             st.dataframe(result_df)
 
             questions = generate_quiz(meanings, synonyms_list, examples)
-            for i, (question, options, correct_answer, explanation) in enumerate(questions):
+            for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
                 selected_option = st.radio(question, options, key=f"question_{i}")
+                correct_answer = options[0]
                 if selected_option:
                     if selected_option == correct_answer:
-                        st.success(f"Correct! {explanation}")
+                        st.success("Correct!")
                     else:
-                        st.error(f"Incorrect. {explanation}")
+                        st.error("Incorrect.")
     else:
         st.warning("Please enter a word!")
