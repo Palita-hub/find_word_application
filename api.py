@@ -47,10 +47,8 @@ def get_word_details(word):
                 synonyms2 = synonyms.split('.')
                 synonyms3 = (synonyms2[0]).replace(',','\n')               
                 synonyms =synonyms3.split('\n')
-
-                example_index = (synonyms2[1]).find(':')
-                example = block[example_index+1:].strip()
                 
+                example = synonyms2
                 
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms,'Example sentence': example})
 
