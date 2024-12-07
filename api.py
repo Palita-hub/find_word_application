@@ -46,9 +46,6 @@ def get_word_details(word):
 
         content = response.choices[0].message.content.strip()
 
-        st.text("Raw Response from OpenAI:")
-        st.text(content)
-
         meanings = []
         synonyms_list = []
         examples = []
@@ -78,8 +75,6 @@ def get_word_details(word):
             return df
         except Exception as parse_error:
             st.error(f"Parsing error: {parse_error}")
-            st.warning("The response could not be processed. Here's the raw output:")
-            st.text(content)
             return None
 
     except openai.error.AuthenticationError:
