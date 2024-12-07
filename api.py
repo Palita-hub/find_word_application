@@ -48,8 +48,8 @@ def get_word_details(word):
                 synonyms4 = synonyms3[0]
                 synonyms =synonyms4.split('\n')
                 no_synonyms = block[block.find("Synonyms:") + len("Synonyms:")-1:block.find('Example:')-1].strip()
-                if no_synonyms == ':':
-                    synonyms = 'No synonyms found'
+                #if no_synonyms == ':':
+                    #synonyms = 'No synonyms found'
                 example = block[block.find('Example:')+len('Example:'):].strip()   
                 if example == '\n':
                     example.split('\n')
