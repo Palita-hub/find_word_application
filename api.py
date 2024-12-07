@@ -41,13 +41,15 @@ def get_word_details(word):
             for i, block in enumerate(meaning_blocks[1:]):
                 meaning_index = block.find(":")
                 
-                synonyms_index = block.find('Synonyms:')                
+                              
                 
                 example_index = block.find('Example:')
                 
                 meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
+
+                synonyms_index = len(meaning)
                 
-                synonyms1 = block[(len(meaning))+1:example_index].strip()
+                synonyms1 = block[synonyms_index+1:example_index].strip()
                 
                 synonyms2 = synonyms1.split('.')
                 
