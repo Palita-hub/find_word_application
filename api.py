@@ -42,13 +42,13 @@ def get_word_details(word):
             synonyms = lines[1].strip() if len(lines) > 1 else "No synonyms found."
             # If "Synonyms:" is in the line, remove it
             if "Synonyms:" in synonyms:
-                synonyms1 = synonyms.replace("Synonyms:", "").strip()
+                synonyms = synonyms.replace("Synonyms:", "").strip()
 
             # Create a Pandas DataFrame
             df = pd.DataFrame({
                 "Word": [word],
                 "Meaning": [meaning],
-                "Synonyms": [synonyms1]
+                "Synonyms": [synonyms]
             })
 
             return df
