@@ -51,9 +51,8 @@ def get_word_details(word):
                 synonyms4 = synonyms3[0]
                 synonyms =synonyms4.split('\n')
                 
-                example1 = meaning2.split('.')
-                example2 = example1[1]
-                example = block[example2.find(':')+1:].strip()   
+                example1 = synonyms3[1]
+                example = block[example1.find(':')+1:].strip()   
                 if example == '\n':
                     example.split('\n')
                 
