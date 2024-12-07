@@ -21,17 +21,18 @@ def get_word_details(word):
     try:
         st.write(f"Searching for meaning of: {word}")
 
-        response = openai.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms. "
                                            f"Separate meanings with 'Meaning:' and synonyms with 'Synonyms:'. "
-                                           f"If there are multiple meanings, number them (e.g., Meaning 1:, Meaning 2:)."},
+                                           f"If there are multiple meanings, number them (e.g., Meaning 1:, Meaning 2:). "
+                                           f"Separate multiple meanings or synonyms with a newline character ('\\n')."},
             ],
         )
 
-        content = response.choices[0].message.content
+        content = response.choices[0].message["content"]
 
         if content:
             rows = []
@@ -40,9 +41,12 @@ def get_word_details(word):
             for i, block in enumerate(meaning_blocks[1:]):
                 meaning_index = block.find(":")
                 meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
-                only_meaning = (meaning.split('.'))[0]
+                meaning = meaning.replace("Meaning", "").replace(str(i + 1), "").strip()
                 synonyms = block[block.find("Synonyms:") + len("Synonyms:"):].strip()
-                only_synonyms = (synonyms.split(':'))[1]
+
+                # Replace newlines with commas for synonyms if needed
+                synonyms = synonyms.replace("\n", ", ")
+
                 rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms})
 
             df = pd.DataFrame(rows)
@@ -62,4 +66,4 @@ if st.button("Find Meaning and Synonyms"):
             st.markdown(f"### Details for *{word}*:")
             st.dataframe(result_df)
     else:
-        st.warning("Please enter a word!")          
+        st.warning("Please enter a word!")
