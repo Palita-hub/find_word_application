@@ -25,27 +25,21 @@ def get_word_details(word):
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms. "
-                                           f"Separate meanings with 'Meaning:' and synonyms with 'Synonyms:'. "
-                                           f"If there are multiple meanings, number them (e.g., Meaning 1:, Meaning 2:)."},
+                {"role": "user", "content": f"Provide the meaning(s) of '{word}' followed by its synonyms, each on a new line starting with '- '."},
             ],
         )
 
         content = response.choices[0].message.content
 
         if content:
-            rows = []
-            meaning_blocks = content.split("Meaning")
+            meaning = content.split("\n- ")[0].strip()
+            synonyms = [syn.strip() for syn in content.split("\n- ")[1:]]
 
-            for i, block in enumerate(meaning_blocks[1:]):
-                meaning_index = block.find(":")
-                meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
-                synonyms1 = block[block.find("Synonyms:") + len("Synonyms:"):].strip()
-                synonyms2 = synonyms1.replace(',','\n')
-                synonyms =synonyms2.split('\n')
-                rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms})
-
-            df = pd.DataFrame(rows)
+            df = pd.DataFrame({
+                "Word": [word],
+                "Meaning": [meaning],
+                "Synonyms": [", ".join(synonyms)]
+            })
             return df
         else:
             st.error("OpenAI response is empty.")
@@ -60,6 +54,10 @@ if st.button("Find Meaning and Synonyms"):
         result_df = get_word_details(word)
         if result_df is not None:
             st.markdown(f"### Details for *{word}*:")
-            st.dataframe(result_df)
+
+            st.dataframe(result_df,
+                        column_config={"Meaning": st.column_config.TextColumn(width="large"),
+                                       "Synonyms": st.column_config.TextColumn(width="large")},
+                        height=400)
     else:
-        st.warning("Please enter a word!")                
+        st.warning("Please enter a word!")
