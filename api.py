@@ -42,7 +42,7 @@ def get_word_details(word):
                 meaning_index = block.find(":")
                 synonyms_index = block.find('.')
                 meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
-                synonyms1 = block[block.find("Synonyms:") + len("Synonyms:"):block.find('Example:'-1)].strip()
+                synonyms1 = block[block.find("Synonyms:") + len("Synonyms:"):block.find('Example:')-1].strip()
                 synonyms2 = synonyms1.replace(',','\n')
                 synonyms3 = synonyms2.split('.')
                 synonyms4 = synonyms3[0]
