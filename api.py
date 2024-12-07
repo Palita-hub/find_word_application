@@ -45,15 +45,15 @@ def get_word_details(word):
                 meaning1 = block.split('.')
                 meaning2 = meaning1[1]
                 
-                synonyms1 = meaning2[meaning.find(':')+1:meaning2.find('.')].strip()
+                synonyms1 = meaning2[meaning2.find(':')+1:meaning2.find('.')].strip()
                 synonyms2 = synonyms1.replace(',','\n')
                 synonyms3 = synonyms2.split('.')
                 synonyms4 = synonyms3[0]
                 synonyms =synonyms4.split('\n')
                 
-                example1 = meaning.split('.')
+                example1 = meaning2.split('.')
                 example2 = example1[1]
-                example = example2[block.find(':'):].strip()   
+                example = example2[block.find(':')+1:].strip()   
                 if example == '\n':
                     example.split('\n')
                 
