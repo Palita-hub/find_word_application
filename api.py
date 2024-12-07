@@ -49,6 +49,7 @@ def get_word_details(word):
         meanings = []
         synonyms_list = []
         examples = []
+        parts_of_speech = []
 
         try:
             parts = content.split("###")
@@ -57,18 +58,23 @@ def get_word_details(word):
                     meanings.append(part.split(":", 1)[1].strip())
                 elif "Synonyms" in part:
                     synonyms = part.split(":", 1)[1].strip()
-                    synonyms_list.append(synonyms if synonyms else "Synonyms not found.")
+                    synonyms_list.append(synonyms if synonyms else "Synonyms not found")
                 elif "Example" in part:
                     example = part.split(":", 1)[1].strip()
-                    examples.append(example if example else "Not found.")
+                    examples.append(example if example else "Not found")
+                elif "Part of Speech" in part:
+                    part_of_speech = part.split(":", 1)[1].strip()
+                    parts_of_speech.append(part_of_speech if part_of_speech else "Not found")
 
-            max_len = max(len(meanings), len(synonyms_list), len(examples))
+            max_len = max(len(meanings), len(synonyms_list), len(examples), len(parts_of_speech))
             meanings.extend(["N/A"] * (max_len - len(meanings)))
             synonyms_list.extend(["N/A"] * (max_len - len(synonyms_list)))
             examples.extend(["N/A"] * (max_len - len(examples)))
+            parts_of_speech.extend(["N/A"] * (max_len - len(parts_of_speech)))
 
             df = pd.DataFrame({
                 "Word": [word] * max_len,
+                "Part of Speech": parts_of_speech,
                 "Meaning": meanings,
                 "Synonyms": synonyms_list,
                 "Example": examples
