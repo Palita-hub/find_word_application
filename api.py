@@ -32,19 +32,15 @@ def get_word_details(word):
         )
 
         content = response.choices[0].message.content
-
         if content:
-            rows = []
-            meaning_blocks = content.split("Meaning")
+            meaning = content.split("\n- ")[0].strip()
+            synonyms = [syn.strip() for syn in content.split("\n- ")[1:]]
 
-            for i, block in enumerate(meaning_blocks[1:]):
-                meaning_index = block.find(":")
-                meaning = block[meaning_index + 1:block.find("Synonyms:")].strip()
-                synonyms = block[block.find("Synonyms:") + len("Synonyms:"):].strip()
-                synonyms = synonyms.replace(',','\n')
-                rows.append({"Word": word, "Meaning": meaning, "Synonyms": synonyms})
-
-            df = pd.DataFrame(rows)
+            df = pd.DataFrame({
+                "Word": [word],
+                "Meaning": [meaning],
+                "Synonyms": [", ".join(synonyms)]
+            })
             return df
         else:
             st.error("OpenAI response is empty.")
@@ -61,4 +57,5 @@ if st.button("Find Meaning and Synonyms"):
             st.markdown(f"### Details for *{word}*:")
             st.dataframe(result_df)
     else:
-        st.warning("Please enter a word!")
+        st.warning("Please enter a word!")        
+       
