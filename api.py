@@ -43,7 +43,7 @@ def get_word_details(word):
                                 "[Comma-separated list of synonyms]\n"
                                 "### Example 2:\n"
                                 "[Example sentence]\n"
-                                "### Translate to Thai:\n"
+                                "### Translate to Thai 1:\n"
                                 "[Translate to Thai]"},
                 ],
                 max_tokens=500,
