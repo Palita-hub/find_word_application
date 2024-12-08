@@ -1,6 +1,8 @@
 import openai
 import streamlit as st
 import pandas as pd
+import random
+from faker import Faker
 
 st.title("Word Meaning and Synonyms Finder")
 
@@ -76,6 +78,7 @@ def get_word_details(word):
             examples.extend(["N/A"] * (max_len - len(examples)))
             parts_of_speech.extend(["N/A"] * (max_len - len(parts_of_speech)))
 
+
             df = pd.DataFrame({
                 "Word": [word] * max_len,
                 "Part of Speech": parts_of_speech,
@@ -126,16 +129,17 @@ if st.button("Find Meaning and Synonyms"):
         if result_df is not None:
             st.markdown(f"### Details for *{word}*:")
             st.dataframe(result_df)
+            shuffled_questions = generate_quiz(meanings, synonyms_list, examples)
+            for i in range(10):
+              fake = Faker()
+              random_word = fake.word()
+              random_word_detail = get_word_details(random_word)
+              st.markdown(f"### Details for *{random_word}*:")
+              quiz_data = generate_quiz(random_word_detail, synonyms_list, examples)
+              st.dataframe(quiz_data)
+              
 
-            questions = generate_quiz(meanings, synonyms_list, examples)
-            for i, (question, options) in enumerate(questions):
-                st.markdown(f"#### Question {i += 1}")
-                selected_option = st.radio(question, options, key=f"question_{i}")
-                correct_answer = options[0]
-                if selected_option:
-                    if selected_option == correct_answer:
-                        st.success("Correct!")
-                    else:
-                        st.error("Incorrect.")
+              
+
     else:
         st.warning("Please enter a word!")
