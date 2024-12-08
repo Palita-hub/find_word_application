@@ -24,7 +24,7 @@ def get_word_details(word):
 
         json_example = "{'meanings': [{'meaning': 'meaning1', 'synonyms': ['synonym1', 'synonym2'], 'example': 'example sentence1'}, {'meaning': 'meaning2', 'synonyms': ['synonym3', 'synonym4'], 'example': 'example sentence2'}]}"
 
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
