@@ -1,145 +1,102 @@
 import openai
 import streamlit as st
 import pandas as pd
+import re
 import random
-from faker import Faker
+import json
 
 st.title("Word Meaning and Synonyms Finder")
 
 api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
-if api_key:
-    openai.api_key = api_key
+openai.api_key = api_key
 
 word = st.text_input("What word are you looking for?")
 
+@st.cache_data  # Cache the function output
 def get_word_details(word):
     if not api_key:
         st.error("Please enter your API key in the sidebar.")
         return None
 
-    if not word.strip().isalpha():
-        st.warning("Enter a valid word containing only alphabets.")
+    if not word:
+        st.warning("Enter a word to search for its meaning.")
         return None
 
     try:
-        with st.spinner("Fetching details... Please wait."):
-            response = openai.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "You are an assistant specialized in language analysis."},
-                    {"role": "user",
-                     "content": f"Provide detailed information about the word '{word}' in this exact structured format:\n"
-                                "### Meaning 1:\n"
-                                "[Meaning]\n"
-                                "### Part of Speech 1:\n"
-                                "[Part of speech for this meaning]\n"
-                                "### Synonyms 1:\n"
-                                "[Comma-separated list of synonyms]\n"
-                                "### Example 1:\n"
-                                "[Example sentence]\n"
-                                "### Meaning 2 (if any):\n"
-                                "[Meaning]\n"
-                                "### Part of Speech 2:\n"
-                                "[Part of speech for this meaning]\n"
-                                "### Synonyms 2:\n"
-                                "[Comma-separated list of synonyms]\n"
-                                "### Example 2:\n"
-                                "[Example sentence]"},
-                ],
-                max_tokens=500,
-                temperature=0.7
-            )
+        example_json = {
+            'meanings': [
+                {'meaning': 'meaning1', 'synonyms': ['synonym1', 'synonym2']},
+                {'meaning': 'meaning2', 'synonyms': ['synonym3', 'synonym4']}
+            ]
+        }
+        example_json_str = json.dumps(example_json)
 
-        content = response.choices[0].message.content.strip()
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms in a JSON format like this: {example_json_str}"},
+            ],
+        )
 
-        meanings = []
-        synonyms_list = []
-        examples = []
-        parts_of_speech = []
+        content = response.choices[0].message["content"]
 
-        try:
-            parts = content.split("###")
-            for part in parts:
-                if "Meaning" in part:
-                    meanings.append(part.split(":", 1)[1].strip())
-                elif "Synonyms" in part:
-                    synonyms = part.split(":", 1)[1].strip()
-                    synonyms_list.append(synonyms if synonyms else "Synonyms not found")
-                elif "Example" in part:
-                    example = part.split(":", 1)[1].strip()
-                    examples.append(example if example else "Not found")
-                elif "Part of Speech" in part:
-                    part_of_speech = part.split(":", 1)[1].strip()
-                    parts_of_speech.append(part_of_speech if part_of_speech else "Not found")
+        # Check if the content is valid JSON before parsing
+        if content and content.strip():
+            try:
+                data = json.loads(content)
+                meanings = data.get("meanings", [])
 
-            max_len = max(len(meanings), len(synonyms_list), len(examples), len(parts_of_speech))
-            meanings.extend(["N/A"] * (max_len - len(meanings)))
-            synonyms_list.extend(["N/A"] * (max_len - len(synonyms_list)))
-            examples.extend(["N/A"] * (max_len - len(examples)))
-            parts_of_speech.extend(["N/A"] * (max_len - len(parts_of_speech)))
+                rows = []
+                for meaning_data in meanings:
+                    meaning = meaning_data.get("meaning", "")
+                    synonyms = meaning_data.get("synonyms", [])
+                    rows.append({"Word": word, "Meaning": meaning, "Synonyms": ", ".join(synonyms)})
 
+                df = pd.DataFrame(rows)
+                return df
+            except json.JSONDecodeError as e:
+                st.error(f"Error decoding JSON response: {e} Content: {content}")
+                return None
+        else:
+            st.error("OpenAI response is empty or invalid JSON.")
+            return None
 
-            df = pd.DataFrame({
-                "Word": [word] * max_len,
-                "Part of Speech": parts_of_speech,
-                "Meaning": meanings,
-                "Synonyms": synonyms_list,
-                "Example": examples
-            })
-            return df, meanings, synonyms_list, examples
-        except Exception as parse_error:
-            st.error(f"Parsing error: {parse_error}")
-            return None, None, None, None
-
-    except openai.error.AuthenticationError:
-        st.error("Authentication error: Please check your API key.")
-    except openai.error.RateLimitError:
-        st.error("Rate limit exceeded: Too many requests. Try again later.")
-    except openai.error.OpenAIError as e:
-        st.error(f"OpenAI error: {e}")
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
+        return None
 
-    return None, None, None, None
 
-def shuffle_list(data_list):
-    if 'shuffle_idx' not in st.session_state:
-        st.session_state.shuffle_idx = list(range(len(data_list)))
-    else:
-        st.session_state.shuffle_idx = st.session_state.shuffle_idx[::-1]
+def generate_question(word_details_df):
+    if word_details_df is None or word_details_df.empty:
+        return None, []
 
-    return [data_list[i] for i in st.session_state.shuffle_idx]
+    selected_meaning_row = word_details_df.sample(1).iloc[0]
+    correct_answer = selected_meaning_row['Meaning']
+    synonyms = selected_meaning_row['Synonyms'].split(', ') if selected_meaning_row['Synonyms'] else []
+    options = [correct_answer] + random.sample(synonyms, min(3, len(synonyms)))
+    while len(options) < 4:
+        options.append("Random Word")  # Replace with actual random word generation logic
+    random.shuffle(options)
+    question = f"What is the meaning of '{selected_meaning_row['Word']}'?"
+    return question, options, correct_answer  # Include correct_answer in return
 
-def generate_quiz(meanings, synonyms, examples):
-    questions = [
-        ("What is the correct meaning of the word based on its definition?", meanings),
-        ("Which of the following are synonyms for the word?", synonyms),
-        ("Which of these sentences uses the word correctly?", examples),
-    ]
-
-    shuffled_questions = []
-    for question, options in questions:
-        shuffled_questions.append((question, shuffle_list(options)))
-
-    return shuffled_questions
 
 if st.button("Find Meaning and Synonyms"):
     if word:
-        result_df, meanings, synonyms_list, examples = get_word_details(word)
+        result_df = get_word_details(word)
         if result_df is not None:
             st.markdown(f"### Details for *{word}*:")
             st.dataframe(result_df)
-            shuffled_questions = generate_quiz(meanings, synonyms_list, examples)
-            for i in range(10):
-              fake = Faker()
-              random_word = fake.word()
-              random_word_detail = get_word_details(random_word)
-              st.markdown(f"### Details for *{random_word}*:")
-              quiz_data = generate_quiz(random_word_detail, synonyms_list, examples)
-              st.dataframe(quiz_data)
-              
 
-              
+            question, options, correct_answer = generate_question(result_df)  # Get correct_answer
+            if question:
+                st.write("**Question:**", question)
+                user_answer = st.radio("Choose an option:", options)
 
+                if user_answer == correct_answer:
+                    st.success("Correct!")
+                else:
+                    st.error("Incorrect. The correct answer is:", correct_answer)
     else:
         st.warning("Please enter a word!")
