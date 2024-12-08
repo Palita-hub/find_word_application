@@ -153,7 +153,8 @@ else:
 
 with col2:
     if st.button("Button 2"):
-        st.write("Button 2 clicked")if st.button('Find Meaning and Synonyms'):
+        st.write("Button 2 clicked")
+if st.button('Find Meaning and Synonyms'):
     if word:
         result_df, meanings, synonyms_list, examples = get_word_details(word)
         st.markdown(f"### Details for *{word}*:")
