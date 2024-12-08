@@ -31,7 +31,7 @@ def get_word_details(word):
         }
         example_json_str = json.dumps(example_json)
 
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -39,7 +39,7 @@ def get_word_details(word):
             ],
         )
 
-        content = response.choices[0].message["content"]
+        content = response.choices[0].message.content
 
         # Check if the content is valid JSON before parsing
         if content and content.strip():
