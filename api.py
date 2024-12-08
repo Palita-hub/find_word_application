@@ -121,31 +121,29 @@ def generate_quiz(meanings, synonyms, examples):
 
     return shuffled_questions
 
-if st.button('Quiz'):
-    question = generate_quiz(meanings, synonyms_list, examples)
-    for i, (question, options) in enumerate(questions):
-            st.markdown(f"#### Question {i + 1}")
-            selected_option = st.radio(question, options, key=f"question_{i}")
-            if question == "What is the correct meaning of the word based on its definition?":                
-                correct_answer =  meanings[0]
-            if question == "Which of the following are synonyms for the word?":
-                correct_answer = synonyms_list[0]
-            if question == "Which of these sentences uses the word correctly?":
-                correct_answer = examples[0]
-            if st.button('Submit'):    
-                if selected_option == correct_answer:
-                    st.success("Correct!")
-                else:
-                    st.error("Incorrect.")
-
-
-    if st.button("Find Meaning and Synonyms"):
-        if word:
-            result_df, meanings, synonyms_list, examples = get_word_details(word)
-            if result_df is not None:
-                st.markdown(f"### Details for *{word}*:")
-                st.dataframe(result_df)
-        
-                
+if st.button("Make a quiz"):
+    if word:
+        result_df, meanings, synonyms_list, examples = get_word_details(word)
+        if result_df is not None:
+            #st.markdown(f"### Details for *{word}*:")
+            #st.dataframe(result_df)
+            questions = generate_quiz(meanings, synonyms_list, examples)
+            for i, (question, options) in enumerate(questions):
+                st.markdown(f"#### Question {i + 1}")
+                selected_option = st.radio(question, options, key=f"question_{i}")
+                if question == "What is the correct meaning of the word based on its definition?":                
+                    correct_answer =  meanings[0]
+                if question == "Which of the following are synonyms for the word?":
+                    correct_answer = synonyms_list[0]
+                if question == "Which of these sentences uses the word correctly?":
+                    correct_answer = examples[0]
+                if st.button('Submit':
+                    if selected_option == correct_answer:
+                        st.success("Correct!")
+                    else:
+                        st.error("Incorrect.")
+                if st.button('Find Meaning and Synonyms'):
+                    st.markdown(f"### Details for *{word}*:")
+                    st.dataframe(result_df)    
         else:
-            st.warning("Please enter a word!")
+        st.warning("Please enter a word!")
