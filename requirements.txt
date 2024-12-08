@@ -1,4 +1,5 @@
 openai
 streamlit
 pandas
-
+random
+faker
