@@ -133,7 +133,7 @@ if st.button("Find Meaning and Synonyms"):
                 st.markdown(f"#### Question {i + 1}")
                 options = random.shuffle(options)
                 selected_option = st.radio(question, options, key=f"question_{i}")
-                correct_answer = [meanings,synonyms,examples]
+                correct_answer = ['meanings','synonyms','examples']
                 
                 if selected_option:
                     if selected_option == correct_answer[i]:
