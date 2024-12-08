@@ -128,22 +128,25 @@ if st.button("Make a quiz"):
             #st.markdown(f"### Details for *{word}*:")
             #st.dataframe(result_df)
             questions = generate_quiz(meanings, synonyms_list, examples)
+            if 'answers' not in st.session_state:
+                    st.session_state['answers'] = {} 
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")              
-                if question == "What is the correct meaning of the word based on its definition?":                
-                    correct_answer =  meanings[0]
-                if question == "Which of the following are synonyms for the word?":
-                    correct_answer = synonyms_list[0]
-                if question == "Which of these sentences uses the word correctly?":
-                    correct_answer = examples[0]   
-                if 'answers' not in st.session_state:
-                    st.session_state['answers'] = {}                
-                
+                #if question == "What is the correct meaning of the word based on its definition?":                
+                    #correct_answer =  meanings[0]
+                #if question == "Which of the following are synonyms for the word?":
+                    #correct_answer = synonyms_list[0]
+                #if question == "Which of these sentences uses the word correctly?":
+                    #correct_answer = examples[0] 
+                if f"question_{i}" not in st.session_state:
+                    st.session_state[f"question_{i}"] = options[0]   
                 selected_option = st.radio(
-                    question, options, key=f"question_{i}", 
-                    index=options.index(st.session_state['answers'].get(f"question_{i}", options[0]))
+                    question, 
+                    options, 
+                    key=f"question_{i}",
+                    index=options.index(st.session_state[f"question_{i}"])
                 )
-                st.session_state['answers'][f"question_{i}"] = selected_option
+                st.session_state[f"question_{i}"] = selected_option
         else:
                 st.warning("Please enter a word!")
     
