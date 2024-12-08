@@ -138,7 +138,7 @@ if st.button("Find Meaning and Synonyms"):
                     correct_answer = synonyms_list[0]
                 if questions == "Which of these sentences uses the word correctly?":
                     correct_answer = examples[0]
-                if selected_option:
+                
                 if selected_option == correct_answer:
                     st.success("Correct!")
                 else:
