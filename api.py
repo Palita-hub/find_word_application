@@ -21,16 +21,18 @@ def get_word_details(word):
 
     try:
         st.write(f"Searching for meaning of: {word}")
-        json_example = "{'meanings': [{'meaning': 'meaning1', 'synonyms': ['synonym1', 'synonym2']}, {'meaning': 'meaning2', 'synonyms': ['synonym3', 'synonym4']}]}"
 
         response = openai.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms in a JSON format like this: {json_example}"},
+                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms and an example sentence for each meaning in a JSON format like this: "
+                                           f"{{'meanings': [{'meaning': 'meaning1', 'synonyms': ['synonym1', 'synonym2'], 'example': 'example sentence1'}, "
+                                           f"{{'meaning': 'meaning2', 'synonyms': ['synonym3', 'synonym4'], 'example': 'example sentence2'}]}}"},
             ],
         )
-        content = response.choices[0].message.content.strip()
+
+        content = response.choices[0].message.content
 
         try:
             data = json.loads(content)
@@ -40,7 +42,8 @@ def get_word_details(word):
             for meaning_data in meanings:
                 meaning = meaning_data.get("meaning", "")
                 synonyms = meaning_data.get("synonyms", [])
-                rows.append({"Word": word, "Meaning": meaning, "Synonyms": ", ".join(synonyms)})
+                example = meaning_data.get("example", "")
+                rows.append({"Word": word, "Meaning": meaning, "Synonyms": ", ".join(synonyms), "Example": example})
 
             df = pd.DataFrame(rows)
             return df
