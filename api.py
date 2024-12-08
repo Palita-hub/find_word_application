@@ -136,17 +136,18 @@ if st.button("Make a quiz"):
                 if question == "Which of the following are synonyms for the word?":
                     correct_answer = synonyms_list[0]
                 if question == "Which of these sentences uses the word correctly?":
-                    correct_answer = examples[0]
-                if st.button('Submit'):
-                    st.write("Submit!")                    
-                    if selected_option == correct_answer:
-                        st.success("Correct!")
-                    else:
-                        st.error("Incorrect.")
-                else:
-                    st.warning('Please submit!')
-                if st.button('Find Meaning and Synonyms'):
-                    st.markdown(f"### Details for *{word}*:")
-                    st.dataframe(result_df)    
+                    correct_answer = examples[0]   
         else:
             st.warning("Please enter a word!")
+if st.button('Submit'):
+    st.write("Submit!")                    
+    if selected_option == correct_answer:
+        st.success("Correct!")
+        else:
+        st.error("Incorrect.")
+else:
+    st.warning('Please submit!')
+if st.button('Find Meaning and Synonyms'):
+    if word:
+        result_df, meanings, synonyms_list, examples = get_word_details(word)st.markdown(f"### Details for *{word}*:")
+    st.dataframe(result_df) 
