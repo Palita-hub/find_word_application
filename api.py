@@ -1,7 +1,6 @@
 import openai
 import streamlit as st
 import pandas as pd
-import random
 
 st.title("Word Meaning and Synonyms Finder")
 
@@ -63,13 +62,13 @@ def get_word_details(word):
                     meanings.append(part.split(":", 1)[1].strip())
                 elif "Synonyms" in part:
                     synonyms = part.split(":", 1)[1].strip()
-                    synonyms_list.append(synonyms if synonyms else "N/A")
+                    synonyms_list.append(synonyms if synonyms else "Synonyms not found")
                 elif "Example" in part:
                     example = part.split(":", 1)[1].strip()
-                    examples.append(example if example else "N/A")
+                    examples.append(example if example else "Not found")
                 elif "Part of Speech" in part:
                     part_of_speech = part.split(":", 1)[1].strip()
-                    parts_of_speech.append(part_of_speech if part_of_speech else "N/A")
+                    parts_of_speech.append(part_of_speech if part_of_speech else "Not found")
 
             max_len = max(len(meanings), len(synonyms_list), len(examples), len(parts_of_speech))
             meanings.extend(["N/A"] * (max_len - len(meanings)))
@@ -84,10 +83,10 @@ def get_word_details(word):
                 "Synonyms": synonyms_list,
                 "Example": examples
             })
-            return df, meanings, synonyms_list, examples
+            return df
         except Exception as parse_error:
             st.error(f"Parsing error: {parse_error}")
-            return None, None, None, None
+            return None
 
     except openai.error.AuthenticationError:
         st.error("Authentication error: Please check your API key.")
@@ -98,76 +97,13 @@ def get_word_details(word):
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
 
-    return None, None, None, None
+    return None
 
-def shuffle_list(data_list):
-    if 'shuffle_idx' not in st.session_state:
-        st.session_state.shuffle_idx = list(range(len(data_list)))
-    else:
-        st.session_state.shuffle_idx = st.session_state.shuffle_idx[::-1]
-
-    return [data_list[i] for i in st.session_state.shuffle_idx]
-
-def generate_quiz(meanings, synonyms, examples):
-    questions = [
-        ("What is the correct meaning of the word based on its definition?", meanings),
-        ("Which of the following are synonyms for the word?", synonyms),
-        ("Which of these sentences uses the word correctly?", examples),
-    ]
-
-    shuffled_questions = []
-    for question, options in questions:
-        shuffled_questions.append((question, shuffle_list(options)))
-
-    return shuffled_questions
-if st.button('Find Meaning and Synonyms'):
+if st.button("Find Meaning and Synonyms"):
     if word:
-        result_df, meanings, synonyms_list, examples = get_word_details(word)
-        st.markdown(f"### Details for *{word}*:")
-        st.dataframe(result_df) 
-    if word:
-        result_df, meanings, synonyms_list, examples = get_word_details(word)
+        result_df = get_word_details(word)
         if result_df is not None:
-            #st.markdown(f"### Details for *{word}*:")
-            #st.dataframe(result_df)
-            if 'quiz_questions' not in st.session_state:
-                st.session_state.quiz_questions = generate_quiz(meanings, synonyms_list, examples)
-                st.session_state.answers = {}
-           
-            for i, (question, options) in enumerate(st.session_state.quiz_questions):
-                st.markdown(f"#### Question {i + 1}")
-                st.markdown(
-                        """
-                    <style>
-                        div[role=radiogroup] .st-cs:first-of-type {
-                            visibility: hidden;
-                            height: 0px;
-                        }
-                    </style>
-                    """,
-                        unsafe_allow_html=True,
-                    )
-                selected_option = st.radio(question, options, key=f"question_{i}")
-                if selected_option:
-                    st.session_state.answers[f"question_{i}"] = selected_option
-                    for i, (question, options) in enumerate(st.session_state.quiz_questions):
-                        
-                        for i, (question, options) in enumerate(st.session_state.quiz_questions):
-                            if f"question_{i}" in st.session_state.answers:
-                                selected_option = st.session_state.answers[f"question_{i}"]                
-                            if question == "What is the correct meaning of the word based on its definition?":                
-                                correct_answer =  meanings[0]
-                            if question == "Which of the following are synonyms for the word?":
-                                correct_answer = synonyms_list[0]
-                            if question == "Which of these sentences uses the word correctly?":
-                                correct_answer = examples[0] 
-                if selected_option == correct_answer:
-                    st.success(f"Correct! The correct answer is: {correct_answer}. This corresponds to the meaning or usage provided earlier.")
-                else:
-                    st.error(f"Incorrect. The correct answer is: {correct_answer}. This corresponds to the meaning or usage provided earlier.")
-                                 
+            st.markdown(f"### Details for *{word}*:")
+            st.dataframe(result_df)
     else:
         st.warning("Please enter a word!")
-    
-
-
