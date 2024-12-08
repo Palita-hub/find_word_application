@@ -136,7 +136,7 @@ if st.button("Find Meaning and Synonyms"):
                 correct_answer = ['meanings','synonyms','examples']
                 
                 if selected_option:
-                    if selected_option == correct_answer[i]:
+                    if selected_option == correct_answer:
                         st.success("Correct!")
                     else:
                         st.error("Incorrect.")
