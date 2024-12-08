@@ -139,19 +139,19 @@ if st.button("Make a quiz"):
                     correct_answer = examples[0] 
             col1, col2 = st.columns(2)
             with col1:
-            if st.button("First Choice"):
-                if options[0] == correct_answer:
-                    st.write("Correct!")
-                else:
-                    st.write("sorry,wrong answer.")
+                if st.button("First Choice"):
+                    if options[0] == correct_answer:
+                        st.write("Correct!")
+                    else:
+                        st.write("sorry,wrong answer.")
             with col2:
                 if st.button("Second Choice"):
                     if options[1] == correct_answer:
                         st.write("Correct!")
                     else:
                         st.write("sorry,wrong answer.")              
-            else:
-                st.warning("Please enter a word!")
+        else:
+            st.warning("Please enter a word!")
     
 else:
     st.markdown("You did not click on submit button.")         
