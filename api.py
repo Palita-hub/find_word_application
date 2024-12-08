@@ -133,10 +133,10 @@ if st.button('Find Meaning and Synonyms'):
             if 'quiz_questions' not in st.session_state:
                 st.session_state.quiz_questions = generate_quiz(meanings, synonyms_list, examples)
                 st.session_state.answers = {}
-
+            st.markdown(f"#### Question {i + 1}")
+            selected_option = st.radio(question, options, key=f"question_{i}")
             for i, (question, options) in enumerate(st.session_state.quiz_questions):
-                st.markdown(f"#### Question {i + 1}")
-                selected_option = st.radio(question, options, key=f"question_{i}")
+                
 
                 if selected_option:
                     st.session_state.answers[f"question_{i}"] = selected_option
