@@ -269,7 +269,7 @@ if st.button("Make a quiz"):
             questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
-                selected_option = st.radio(question, options, key")
+                selected_option = st.radio("Choose an option", options, key="unique_radio_key")
                 if question == "What is the correct meaning of the word based on its definition?":                
                     correct_answer =  meanings[0]
                 if question == "Which of the following are synonyms for the word?":
@@ -292,18 +292,4 @@ if st.button('Find Meaning and Synonyms'):
         result_df, meanings, synonyms_list, examples = get_word_details(word)
         st.markdown(f"### Details for *{word}*:")
         st.dataframe(result_df) 
-        else:
-            st.warning("Please enter a word!")
-    if st.button('Submit'):
-        st.write("Submit!")                    
-        if selected_option == correct_answer:
-            st.success("Correct!")
-        else:
-            st.error("Incorrect.")
-    else:
-        st.warning('Please submit!')
-if st.button('Find Meaning and Synonyms'):
-    if word:
-        result_df, meanings, synonyms_list, examples = get_word_details(word)
-        st.markdown(f"### Details for *{word}*:")
-        st.dataframe(result_df) 
+
