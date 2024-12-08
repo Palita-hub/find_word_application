@@ -129,24 +129,20 @@ if st.button("Make a quiz"):
             #st.dataframe(result_df)
             questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
-                st.markdown(f"#### Question {i + 1}")
-                
+                st.markdown(f"#### Question {i + 1}")              
                 if question == "What is the correct meaning of the word based on its definition?":                
                     correct_answer =  meanings[0]
                 if question == "Which of the following are synonyms for the word?":
                     correct_answer = synonyms_list[0]
                 if question == "Which of these sentences uses the word correctly?":
                     correct_answer = examples[0]   
+                selected_option = st.radio(
+                    question, options, key=f"question_{i}", 
+                    index=options.index(st.session_state['answers'].get(f"question_{i}", options[0]))
+                st.session_state['answers'][f"question_{i}"] = selected_option
         else:
-            st.warning("Please enter a word!")
-    with st.form(key="form"):
-        files = st.file_uploader("Files", accept_multiple_files=True)
-        submit_button = st.form_submit_button(label="Submit")
-    if submit_button:
-        if files:
-            st.markdown("You chose the files {}".format(", ".join([f.name for f in files])))
-        else:
-            st.markdown("You did not choose any file but clicked on 'Submit choice' anyway")
+                st.warning("Please enter a word!")
+    
 else:
     st.markdown("You did not click on submit button.")
     if st.button('Submit'):
