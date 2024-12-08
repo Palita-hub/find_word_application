@@ -121,14 +121,8 @@ def generate_quiz(meanings, synonyms, examples):
 
     return shuffled_questions
 
-if st.button("Find Meaning and Synonyms"):
-    if word:
-        result_df, meanings, synonyms_list, examples = get_word_details(word)
-        if result_df is not None:
-            st.markdown(f"### Details for *{word}*:")
-            st.dataframe(result_df)
-
-            questions = generate_quiz(meanings, synonyms_list, examples)
+if st.button('Quiz'):
+    questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
                 selected_option = st.radio(question, options, key=f"question_{i}")
@@ -143,5 +137,15 @@ if st.button("Find Meaning and Synonyms"):
                     st.success("Correct!")
                 else:
                     st.error("Incorrect.")
-    else:
-        st.warning("Please enter a word!")
+
+
+    if st.button("Find Meaning and Synonyms"):
+        if word:
+            result_df, meanings, synonyms_list, examples = get_word_details(word)
+            if result_df is not None:
+                st.markdown(f"### Details for *{word}*:")
+                st.dataframe(result_df)
+        
+                
+        else:
+            st.warning("Please enter a word!")
