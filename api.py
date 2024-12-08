@@ -131,9 +131,9 @@ if st.button("Find Meaning and Synonyms"):
             questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
-                #options = random.shuffle(options)
+                options = random.shuffle(options)
                 selected_option = st.radio(question, options, key=f"question_{i}")
-                correct_answer = ['meanings','synonyms','examples']
+                correct_answer = ['meanings[0]','synonyms_list[0]','examples[0]']
                 
                 if selected_option:
                     if selected_option == correct_answer:
