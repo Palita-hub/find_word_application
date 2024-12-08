@@ -130,7 +130,6 @@ if st.button("Make a quiz"):
             questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
-                selected_option = st.radio(question, options, key=f"question_{i}")
                 st.write(f"Your answer to Question {i + 1}: {selected_option}")
                 if question == "What is the correct meaning of the word based on its definition?":                
                     correct_answer =  meanings[0]
@@ -140,6 +139,16 @@ if st.button("Make a quiz"):
                     correct_answer = examples[0]   
         else:
             st.warning("Please enter a word!")
+    with st.form(key="form"):
+    files = st.file_uploader("Files", accept_multiple_files=True)
+    submit_button = st.form_submit_button(label="Submit")
+    if submit_button:
+        if files:
+            st.markdown("You chose the files {}".format(", ".join([f.name for f in files])))
+        else:
+            st.markdown("You did not choose any file but clicked on 'Submit choice' anyway")
+else:
+    st.markdown("You did not click on submit button.")
     if st.button('Submit'):
         st.write("Submit!")                    
         if selected_option == correct_answer:
