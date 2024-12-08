@@ -143,6 +143,8 @@ if st.button("Make a quiz"):
                         st.success("Correct!")
                     else:
                         st.error("Incorrect.")
+                else:
+                    st.warning('Please submit!')
                 if st.button('Find Meaning and Synonyms'):
                     st.markdown(f"### Details for *{word}*:")
                     st.dataframe(result_df)    
