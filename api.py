@@ -117,7 +117,7 @@ def generate_quiz(meanings, synonyms, examples):
 
     shuffled_questions = []
     for question, options in questions:
-        shuffled_questions.append((question, random.shuffle(options)))
+        shuffled_questions.append((question, shuffle_list(options)))
 
     return shuffled_questions
 
