@@ -129,7 +129,7 @@ if st.button("Find Meaning and Synonyms"):
 
             questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
-                st.markdown(f"#### Question {i + 1}")
+                st.markdown(f"#### Question {i += 1}")
                 selected_option = st.radio(question, options, key=f"question_{i}")
                 correct_answer = options[0]
                 if selected_option:
