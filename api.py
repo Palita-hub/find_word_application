@@ -140,13 +140,13 @@ if st.button("Make a quiz"):
                     correct_answer = examples[0] 
                 col1, col2 = st.columns(2)
                 with col1:
-                    if st.button("First Choice"):
+                    if st.button(f"{i+1}.1"):
                         if options[0] == correct_answer:
                             st.write("Correct!")
                         else:
-                            st.write("sorry,wrong answer.")
+                            st.write("Sorry,wrong answer.")
                 with col2:
-                    if st.button("Second Choice"):
+                    if st.button("{i+1}.2"):
                         if options[1] == correct_answer:
                             st.write("Correct!")
                         else:
