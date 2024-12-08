@@ -137,16 +137,16 @@ if st.button('Find Meaning and Synonyms'):
             for i, (question, options) in enumerate(st.session_state.quiz_questions):
                 st.markdown(f"#### Question {i + 1}")
                 st.markdown(
-                    """
-                <style>
-                    div[role=radiogroup] .st-cs:first-of-type {
-                        visibility: hidden;
-                        height: 0px;
-                    }
-                </style>
-                """,
-                    unsafe_allow_html=True,
-                )
+                        """
+                    <style>
+                        div[role=radiogroup] .st-cs:first-of-type {
+                            visibility: hidden;
+                            height: 0px;
+                        }
+                    </style>
+                    """,
+                        unsafe_allow_html=True,
+                    )
                 selected_option = st.radio(question, options, key=f"question_{i}")
                 if selected_option:
                     st.session_state.answers[f"question_{i}"] = selected_option
