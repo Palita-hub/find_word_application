@@ -131,13 +131,17 @@ if st.button("Find Meaning and Synonyms"):
             questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
-                
                 selected_option = st.radio(question, options, key=f"question_{i}")
-                correct_answer = options[0]                
+                if questions == "What is the correct meaning of the word based on its definition?":                
+                    correct_answer =  meanings[0]
+                if questions == "Which of the following are synonyms for the word?":
+                    correct_answer = synonyms_list[0]
+                if questions == "Which of these sentences uses the word correctly?":
+                    correct_answer = examples[0]
                 if selected_option:
-                    if selected_option == correct_answer:
-                        st.success("Correct!")
-                    else:
-                        st.error("Incorrect.")
+                if selected_option == correct_answer:
+                    st.success("Correct!")
+                else:
+                    st.error("Incorrect.")
     else:
         st.warning("Please enter a word!")
