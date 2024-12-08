@@ -140,8 +140,8 @@ if st.button("Make a quiz"):
         else:
             st.warning("Please enter a word!")
     with st.form(key="form"):
-    files = st.file_uploader("Files", accept_multiple_files=True)
-    submit_button = st.form_submit_button(label="Submit")
+        files = st.file_uploader("Files", accept_multiple_files=True)
+        submit_button = st.form_submit_button(label="Submit")
     if submit_button:
         if files:
             st.markdown("You chose the files {}".format(", ".join([f.name for f in files])))
