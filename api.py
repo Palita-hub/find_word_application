@@ -128,39 +128,32 @@ if st.button("Make a quiz"):
             #st.markdown(f"### Details for *{word}*:")
             #st.dataframe(result_df)
             questions = generate_quiz(meanings, synonyms_list, examples)
-            if 'answers' not in st.session_state:
-                    st.session_state['answers'] = {} 
             for i, (question, options) in enumerate(questions):
-                st.markdown(f"#### Question {i + 1}")              
-                #if question == "What is the correct meaning of the word based on its definition?":                
-                    #correct_answer =  meanings[0]
-                #if question == "Which of the following are synonyms for the word?":
-                    #correct_answer = synonyms_list[0]
-                #if question == "Which of these sentences uses the word correctly?":
-                    #correct_answer = examples[0] 
-                if f"question_{i}" not in st.session_state:
-                    st.session_state[f"question_{i}"] = options[0]   
-                selected_option = st.radio(
-                    question, 
-                    options, 
-                    key=f"question_{i}",
-                    index=options.index(st.session_state[f"question_{i}"])
-                )
-                st.session_state[f"question_{i}"] = selected_option
+                st.markdown(f"#### Question {i + 1}")
+                st.write(options)
+                if question == "What is the correct meaning of the word based on its definition?":                
+                    correct_answer =  meanings[0]
+                if question == "Which of the following are synonyms for the word?":
+                    correct_answer = synonyms_list[0]
+                if question == "Which of these sentences uses the word correctly?":
+                    correct_answer = examples[0] 
+                
         else:
                 st.warning("Please enter a word!")
     
 else:
     st.markdown("You did not click on submit button.")
-    if st.button('Submit'):
-        st.write("Submit!")                    
-        if selected_option == correct_answer:
-            st.success("Correct!")
-        else:
-            st.error("Incorrect.")
-    else:
-        st.warning('Please submit!')
-if st.button('Find Meaning and Synonyms'):
+    
+    col1, col2 = st.columns(2)
+
+
+    with col1:
+        if st.button("Button 1"):
+            st.write("Button 1 clicked")
+
+with col2:
+    if st.button("Button 2"):
+        st.write("Button 2 clicked")if st.button('Find Meaning and Synonyms'):
     if word:
         result_df, meanings, synonyms_list, examples = get_word_details(word)
         st.markdown(f"### Details for *{word}*:")
