@@ -42,7 +42,9 @@ def get_word_details(word):
                                 "### Synonyms 2:\n"
                                 "[Comma-separated list of synonyms]\n"
                                 "### Example 2:\n"
-                                "[Example sentence]"},
+                                "[Example sentence]"
+                                "### Translate to Thai:\n"
+                                "[Translate to Thai]\n"},
                 ],
                 max_tokens=500,
                 temperature=0.7
@@ -54,6 +56,7 @@ def get_word_details(word):
         synonyms_list = []
         examples = []
         parts_of_speech = []
+        Thai_list = []
 
         try:
             parts = content.split("###")
@@ -69,19 +72,24 @@ def get_word_details(word):
                 elif "Part of Speech" in part:
                     part_of_speech = part.split(":", 1)[1].strip()
                     parts_of_speech.append(part_of_speech if part_of_speech else "Not found")
+                elif "Translate to Thai" in part:
+                    Thai_word = part.split(":",1)[1]).strip()
+                    Thai_list.append(Thai_word if Thai_word else "Not found")
 
             max_len = max(len(meanings), len(synonyms_list), len(examples), len(parts_of_speech))
             meanings.extend(["N/A"] * (max_len - len(meanings)))
             synonyms_list.extend(["N/A"] * (max_len - len(synonyms_list)))
             examples.extend(["N/A"] * (max_len - len(examples)))
             parts_of_speech.extend(["N/A"] * (max_len - len(parts_of_speech)))
+            Thai_list.extend(["N/A"]*(max_len-len(Thai_list)))
 
             df = pd.DataFrame({
                 "Word": [word] * max_len,
                 "Part of Speech": parts_of_speech,
                 "Meaning": meanings,
                 "Synonyms": synonyms_list,
-                "Example": examples
+                "Example": examples,
+                "Thai Meaning": Thai_list
             })
             return df
         except Exception as parse_error:
