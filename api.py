@@ -133,24 +133,23 @@ if st.button('Find Meaning and Synonyms'):
             if 'quiz_questions' not in st.session_state:
                 st.session_state.quiz_questions = generate_quiz(meanings, synonyms_list, examples)
                 st.session_state.answers = {}
-            st.markdown(f"#### Question {i + 1}")
-            selected_option = st.radio(question, options, key=f"question_{i}")
+           
             for i, (question, options) in enumerate(st.session_state.quiz_questions):
-                
-
+                st.markdown(f"#### Question {i + 1}")
+                selected_option = st.radio(question, options, key=f"question_{i}")
                 if selected_option:
                     st.session_state.answers[f"question_{i}"] = selected_option
                     for i, (question, options) in enumerate(st.session_state.quiz_questions):
                         st.markdown(f"#### Question {i + 1}")
-                    for i, (question, options) in enumerate(st.session_state.quiz_questions):
-                        if f"question_{i}" in st.session_state.answers:
-                            selected_option = st.session_state.answers[f"question_{i}"]                
-                        if question == "What is the correct meaning of the word based on its definition?":                
-                            correct_answer =  meanings[0]
-                        if question == "Which of the following are synonyms for the word?":
-                            correct_answer = synonyms_list[0]
-                        if question == "Which of these sentences uses the word correctly?":
-                            correct_answer = examples[0] 
+                        for i, (question, options) in enumerate(st.session_state.quiz_questions):
+                            if f"question_{i}" in st.session_state.answers:
+                                selected_option = st.session_state.answers[f"question_{i}"]                
+                            if question == "What is the correct meaning of the word based on its definition?":                
+                                correct_answer =  meanings[0]
+                            if question == "Which of the following are synonyms for the word?":
+                                correct_answer = synonyms_list[0]
+                            if question == "Which of these sentences uses the word correctly?":
+                                correct_answer = examples[0] 
                         if selected_option == correct_answer:
                             st.success(f"Correct! The correct answer is: {correct_answer}. This corresponds to the meaning or usage provided earlier.")
                         else:
