@@ -1,12 +1,12 @@
 import openai
 import streamlit as st
 import pandas as pd
+import json
 
 st.title("Word Meaning and Synonyms Finder")
 
 api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
-if api_key:
-    openai.api_key = api_key
+openai.api_key = api_key
 
 word = st.text_input("What word are you looking for?")
 
@@ -15,93 +15,42 @@ def get_word_details(word):
         st.error("Please enter your API key in the sidebar.")
         return None
 
-    if not word.strip().isalpha():
-        st.warning("Enter a valid word containing only alphabets.")
+    if not word:
+        st.warning("Enter a word to search for its meaning.")
         return None
 
     try:
-        with st.spinner("Fetching details... Please wait."):
-            response = openai.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "You are an assistant specialized in language analysis."},
-                    {"role": "user",
-                     "content": f"Provide detailed information about the word '{word}' in this exact structured format:\n"
-                                "### Meaning 1:\n"
-                                "[Meaning]\n"
-                                "### Part of Speech 1:\n"
-                                "[Part of speech for this meaning]\n"
-                                "### Synonyms 1:\n"
-                                "[Comma-separated list of synonyms]\n"
-                                "### Example 1:\n"
-                                "[Example sentence]\n"
-                                "### Meaning 2 (if any):\n"
-                                "[Meaning]\n"
-                                "### Part of Speech 2:\n"
-                                "[Part of speech for this meaning]\n"
-                                "### Synonyms 2:\n"
-                                "[Comma-separated list of synonyms]\n"
-                                "### Example 2:\n"
-                                "[Example sentence]"
-                                },
-                ],
-                max_tokens=500,
-                temperature=0.7
-            )
+        st.write(f"Searching for meaning of: {word}")
+        json_example = "{'meanings': [{'meaning': 'meaning1', 'synonyms': ['synonym1', 'synonym2']}, {'meaning': 'meaning2', 'synonyms': ['synonym3', 'synonym4']}]}"
 
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": f"Provide the meaning(s) of '{word}' and their corresponding synonyms in a JSON format like this: {json_example}"},
+            ],
+        )
         content = response.choices[0].message.content.strip()
 
-        meanings = []
-        synonyms_list = []
-        examples = []
-        parts_of_speech = []
-     
-
         try:
-            parts = content.split("###")
-            for part in parts:
-                if "Meaning" in part:
-                    meanings.append(part.split(":", 1)[1].strip())
-                elif "Synonyms" in part:
-                    synonyms = part.split(":", 1)[1].strip()
-                    synonyms_list.append(synonyms if synonyms else "Synonyms not found")
-                elif "Example" in part:
-                    example = part.split(":", 1)[1].strip()
-                    examples.append(example if example else "Not found")
-                elif "Part of Speech" in part:
-                    part_of_speech = part.split(":", 1)[1].strip()
-                    parts_of_speech.append(part_of_speech if part_of_speech else "Not found")
-                
+            data = json.loads(content)
+            meanings = data.get("meanings", [])
 
-            max_len = max(len(meanings), len(synonyms_list), len(examples), len(parts_of_speech))
-            meanings.extend(["N/A"] * (max_len - len(meanings)))
-            synonyms_list.extend(["N/A"] * (max_len - len(synonyms_list)))
-            examples.extend(["N/A"] * (max_len - len(examples)))
-            parts_of_speech.extend(["N/A"] * (max_len - len(parts_of_speech)))
-            
+            rows = []
+            for meaning_data in meanings:
+                meaning = meaning_data.get("meaning", "")
+                synonyms = meaning_data.get("synonyms", [])
+                rows.append({"Word": word, "Meaning": meaning, "Synonyms": ", ".join(synonyms)})
 
-            df = pd.DataFrame({
-                "Word": [word] * max_len,
-                "Part of Speech": parts_of_speech,
-                "Meaning": meanings,
-                "Synonyms": synonyms_list,
-                "Example": examples,
-            })
+            df = pd.DataFrame(rows)
             return df
-        except Exception as parse_error:
-            st.error(f"Parsing error: {parse_error}")
+        except json.JSONDecodeError as e:
+            st.error(f"Error decoding JSON response: {e}")
             return None
 
-    except openai.error.AuthenticationError:
-        st.error("Authentication error: Please check your API key.")
-    except openai.error.RateLimitError:
-        st.error("Rate limit exceeded: Too many requests. Try again later.")
-    except openai.error.OpenAIError as e:
-        st.error(f"OpenAI error: {e}")
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
-
-    return None
+        return None
 
 if st.button("Find Meaning and Synonyms"):
     if word:
