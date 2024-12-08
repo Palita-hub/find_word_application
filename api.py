@@ -146,7 +146,7 @@ if st.button("Make a quiz"):
                         else:
                             st.write("Sorry,wrong answer.")
                 with col2:
-                    if st.button("{i+1}.2"):
+                    if st.button(f"{i+1}.2"):
                         if options[1] == correct_answer:
                             st.write("Correct!")
                         else:
