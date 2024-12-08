@@ -137,7 +137,7 @@ if st.button("Make a quiz"):
                     correct_answer = synonyms_list[0]
                 if question == "Which of these sentences uses the word correctly?":
                     correct_answer = examples[0]
-                if st.button('Submit':
+                if st.button('Submit'):
                     if selected_option == correct_answer:
                         st.success("Correct!")
                     else:
