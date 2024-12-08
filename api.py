@@ -140,7 +140,7 @@ if st.button('Find Meaning and Synonyms'):
                 if selected_option:
                     st.session_state.answers[f"question_{i}"] = selected_option
                     for i, (question, options) in enumerate(st.session_state.quiz_questions):
-                        st.markdown(f"#### Question {i + 1}")
+                        
                         for i, (question, options) in enumerate(st.session_state.quiz_questions):
                             if f"question_{i}" in st.session_state.answers:
                                 selected_option = st.session_state.answers[f"question_{i}"]                
@@ -150,10 +150,10 @@ if st.button('Find Meaning and Synonyms'):
                                 correct_answer = synonyms_list[0]
                             if question == "Which of these sentences uses the word correctly?":
                                 correct_answer = examples[0] 
-                    if selected_option == correct_answer:
-                        st.success(f"Correct! The correct answer is: {correct_answer}. This corresponds to the meaning or usage provided earlier.")
-                    else:
-                        st.error(f"Incorrect. The correct answer is: {correct_answer}. This corresponds to the meaning or usage provided earlier.")
+                if selected_option == correct_answer:
+                    st.success(f"Correct! The correct answer is: {correct_answer}. This corresponds to the meaning or usage provided earlier.")
+                else:
+                    st.error(f"Incorrect. The correct answer is: {correct_answer}. This corresponds to the meaning or usage provided earlier.")
                                  
     else:
         st.warning("Please enter a word!")
