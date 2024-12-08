@@ -151,4 +151,4 @@ if st.button('Find Meaning and Synonyms'):
     if word:
         result_df, meanings, synonyms_list, examples = get_word_details(word)
         st.markdown(f"### Details for *{word}*:")
-    st.dataframe(result_df) 
+        st.dataframe(result_df) 
