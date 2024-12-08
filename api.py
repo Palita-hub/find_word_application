@@ -154,24 +154,7 @@ if st.button("Make a quiz"):
                 st.warning("Please enter a word!")
     
 else:
-    st.markdown("You did not click on submit button.")
-    
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("First Choice"):
-            if options[0] == correct_answer:
-                st.write("Correct!")
-            else:
-                st.write("sorry,wrong answer.")
-
-    with col2:
-        if st.button("Second Choice"):
-            if options[1] == correct_answer:
-                st.write("Correct!")
-            else:
-                st.write("sorry,wrong answer.")            
-           
+    st.markdown("You did not click on submit button.")         
 if st.button('Find Meaning and Synonyms'):
     if word:
         result_df, meanings, synonyms_list, examples = get_word_details(word)
