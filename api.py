@@ -132,11 +132,11 @@ if st.button("Find Meaning and Synonyms"):
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
                 selected_option = st.radio(question, options, key=f"question_{i}")
-                if questions == "What is the correct meaning of the word based on its definition?":                
+                if question == "What is the correct meaning of the word based on its definition?":                
                     correct_answer =  meanings[0]
-                if questions == "Which of the following are synonyms for the word?":
+                if question == "Which of the following are synonyms for the word?":
                     correct_answer = synonyms_list[0]
-                if questions == "Which of these sentences uses the word correctly?":
+                if question == "Which of these sentences uses the word correctly?":
                     correct_answer = examples[0]
                 
                 if selected_option == correct_answer:
