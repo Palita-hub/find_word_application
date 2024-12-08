@@ -146,4 +146,4 @@ if st.button("Make a quiz"):
                     st.markdown(f"### Details for *{word}*:")
                     st.dataframe(result_df)    
         else:
-        st.warning("Please enter a word!")
+            st.warning("Please enter a word!")
