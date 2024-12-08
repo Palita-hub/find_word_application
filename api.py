@@ -140,7 +140,7 @@ if st.button('Find Meaning and Synonyms'):
 
                 if selected_option:
                     st.session_state.answers[f"question_{i}"] = selected_option
-                    for i, (question, options) in enumerate(questions):
+                    for i, (question, options) in (shuffled_questions):
                         st.markdown(f"#### Question {i + 1}")
                     for i, (question, options) in enumerate(st.session_state.quiz_questions):
                         if f"question_{i}" in st.session_state.answers:
