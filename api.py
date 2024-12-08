@@ -143,7 +143,7 @@ if st.button('Submit'):
     st.write("Submit!")                    
     if selected_option == correct_answer:
         st.success("Correct!")
-        else:
+    else:
         st.error("Incorrect.")
 else:
     st.warning('Please submit!')
