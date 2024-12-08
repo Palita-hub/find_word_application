@@ -131,7 +131,7 @@ if st.button("Find Meaning and Synonyms"):
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
                 selected_option = st.radio(question, options, key=f"question_{i}")
-                correct_answer = options[0]
+                correct_answer = options[1]
                 if selected_option:
                     if selected_option == correct_answer:
                         st.success("Correct!")
