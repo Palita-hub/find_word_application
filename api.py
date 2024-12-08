@@ -1,6 +1,7 @@
 import openai
 import streamlit as st
 import pandas as pd
+import random
 
 st.title("Word Meaning and Synonyms Finder")
 
@@ -130,10 +131,12 @@ if st.button("Find Meaning and Synonyms"):
             questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
+                options = random.shuffle(options)
                 selected_option = st.radio(question, options, key=f"question_{i}")
-                correct_answer = options[1]
+                correct_answer = [meanings,synonyms,examples]
+                
                 if selected_option:
-                    if selected_option == correct_answer:
+                    if selected_option == correct_answer[i]:
                         st.success("Correct!")
                     else:
                         st.error("Incorrect.")
