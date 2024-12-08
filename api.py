@@ -122,7 +122,7 @@ def generate_quiz(meanings, synonyms, examples):
     return shuffled_questions
 
 if st.button('Quiz'):
-    questions = generate_quiz(meanings, synonyms_list, examples)
+    question = generate_quiz(meanings, synonyms_list, examples)
     for i, (question, options) in enumerate(questions):
             st.markdown(f"#### Question {i + 1}")
             selected_option = st.radio(question, options, key=f"question_{i}")
