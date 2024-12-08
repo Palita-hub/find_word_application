@@ -130,15 +130,27 @@ if st.button("Make a quiz"):
             questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
-                st.write(options[0],options[1])
+                st.write("options[0]\noptions[1]")
                 if question == "What is the correct meaning of the word based on its definition?":                
                     correct_answer =  meanings[0]
                 if question == "Which of the following are synonyms for the word?":
                     correct_answer = synonyms_list[0]
                 if question == "Which of these sentences uses the word correctly?":
                     correct_answer = examples[0] 
-                
-        else:
+            col1, col2 = st.columns(2)
+            with col1:
+            if st.button("First Choice"):
+                if options[0] == correct_answer:
+                    st.write("Correct!")
+                else:
+                    st.write("sorry,wrong answer.")
+            with col2:
+                if st.button("Second Choice"):
+                    if options[1] == correct_answer:
+                        st.write("Correct!")
+                    else:
+                        st.write("sorry,wrong answer.")              
+            else:
                 st.warning("Please enter a word!")
     
 else:
