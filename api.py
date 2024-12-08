@@ -269,7 +269,7 @@ if st.button("Make a quiz"):
             questions = generate_quiz(meanings, synonyms_list, examples)
             for i, (question, options) in enumerate(questions):
                 st.markdown(f"#### Question {i + 1}")
-                selected_option = st.radio("Choose an option", options, key="unique_radio_key")
+                selected_option = st.radio(question, options, key=f"question_{i}")
                 if question == "What is the correct meaning of the word based on its definition?":                
                     correct_answer =  meanings[0]
                 if question == "Which of the following are synonyms for the word?":
