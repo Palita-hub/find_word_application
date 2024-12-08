@@ -123,7 +123,7 @@ def generate_quiz(meanings, synonyms, examples):
 
 if st.button('Quiz'):
     questions = generate_quiz(meanings, synonyms_list, examples)
-        for i, (question, options) in enumerate(questions):
+    for i, (question, options) in enumerate(questions):
             st.markdown(f"#### Question {i + 1}")
             selected_option = st.radio(question, options, key=f"question_{i}")
             if question == "What is the correct meaning of the word based on its definition?":                
