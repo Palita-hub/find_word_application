@@ -42,9 +42,9 @@ def get_word_details(word):
                                 "### Synonyms 2:\n"
                                 "[Comma-separated list of synonyms]\n"
                                 "### Example 2:\n"
-                                "[Example sentence]"
+                                "[Example sentence]\n"
                                 "### Translate to Thai:\n"
-                                "[Translate to Thai]\n"},
+                                "[Translate to Thai]"},
                 ],
                 max_tokens=500,
                 temperature=0.7
