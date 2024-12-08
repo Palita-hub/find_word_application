@@ -136,6 +136,9 @@ if st.button("Make a quiz"):
                     correct_answer = synonyms_list[0]
                 if question == "Which of these sentences uses the word correctly?":
                     correct_answer = examples[0]   
+                if 'answers' not in st.session_state:
+                    st.session_state['answers'] = {}                
+                
                 selected_option = st.radio(
                     question, options, key=f"question_{i}", 
                     index=options.index(st.session_state['answers'].get(f"question_{i}", options[0]))
