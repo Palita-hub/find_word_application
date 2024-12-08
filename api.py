@@ -139,6 +139,7 @@ if st.button("Make a quiz"):
                 selected_option = st.radio(
                     question, options, key=f"question_{i}", 
                     index=options.index(st.session_state['answers'].get(f"question_{i}", options[0]))
+                )
                 st.session_state['answers'][f"question_{i}"] = selected_option
         else:
                 st.warning("Please enter a word!")
