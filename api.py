@@ -73,7 +73,7 @@ def get_word_details(word):
                     part_of_speech = part.split(":", 1)[1].strip()
                     parts_of_speech.append(part_of_speech if part_of_speech else "Not found")
                 elif "Translate to Thai" in part:
-                    Thai_word = part.split(":",1)[1]).strip()
+                    Thai_word = part.split((":",1)[1]).strip()
                     Thai_list.append(Thai_word if Thai_word else "Not found")
 
             max_len = max(len(meanings), len(synonyms_list), len(examples), len(parts_of_speech))
